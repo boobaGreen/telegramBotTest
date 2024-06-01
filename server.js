@@ -45,7 +45,7 @@ bot.on("message", function (ctx) {
     var messageSizeKB = parseFloat(calculateMessageSizeKB(ctx.message)); // Calcola la dimensione del messaggio in KB
     totalSizeKB += messageSizeKB;
     console.log("Contenuto del messaggio:", ctx.message);
-    var totalSizeBytes = totalSizeKB * 1024;
+    var totalSizeBytes = totalSizeKB * 1000;
     var emissions = oneByte.perByte(totalSizeBytes);
     ctx.reply("La dimensione del messaggio \u00E8 di ".concat(messageSizeKB, " KB. Totale messaggi: ").concat(totalMessages, ". Peso totale: ").concat(totalSizeKB.toFixed(3), " e le emissioni di CO2 associate sono di ").concat(emissions, " kg."));
     ctx.reply("Contenuto totale di ctx.message:".concat(JSON.stringify(ctx.message)));
