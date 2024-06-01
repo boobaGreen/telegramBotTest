@@ -61,7 +61,7 @@ bot.launch();
 
 // Imposta una semplice rotta per verificare che il server sia in esecuzione
 app.get("/", (req, res) => {
-  res.send("Server is running and bot is active.");
+  res.send("Server is running and bot is active. grammi version");
 });
 
 // Avvia il server Express
