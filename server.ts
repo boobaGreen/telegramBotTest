@@ -3,7 +3,8 @@ const express = require("express");
 const { Telegraf } = require("telegraf");
 
 const app = express();
-const bot = new Telegraf(process.env.BOT_TOKEN);
+// const bot = new Telegraf(process.env.BOT_TOKEN);
+const bot = new Telegraf("7317510692:AAF20M_I-Gz8g8PCnbE3fPjCnwRM9cKF784");
 
 let totalMessages = 0;
 let totalSizeKB = 0;
@@ -28,7 +29,8 @@ const calculateMessageSizeKB = (message) => {
     return "Tipo di messaggio non supportato";
   }
 };
-
+const { co2 } = require("@tgwf/co2");
+const oneByte = new co2({ model: "1byte" });
 console.log("Bot started");
 bot.start((ctx) =>
   ctx.reply("This message show when you use the /start command on the bot")
@@ -44,10 +46,13 @@ bot.on("message", (ctx) => {
 
   console.log("Contenuto del messaggio:", ctx.message);
 
+  const totalSizeBytes = totalSizeKB * 1024;
+  const emissions = oneByte.perByte(totalSizeBytes);
+
   ctx.reply(
     `La dimensione del messaggio è di ${messageSizeKB} KB. Totale messaggi: ${totalMessages}. Peso totale: ${totalSizeKB.toFixed(
       3
-    )} `
+    )} e le emissioni di CO2 associate sono di ${emissions} kg.`
   );
   ctx.reply(`Contenuto totale di ctx.message:${JSON.stringify(ctx.message)}`);
 });
