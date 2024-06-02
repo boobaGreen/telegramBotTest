@@ -3,7 +3,7 @@ name: CICD
 on:
   push:
     branches:
-      - aws5
+      - aws6
 
 jobs:
   build-and-deploy:

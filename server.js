@@ -33,6 +33,7 @@ var calculateMessageSizeKB = function (message) {
 };
 var co2 = require("@tgwf/co2").co2;
 var oneByte = new co2({ model: "1byte" });
+var swd = new co2({ model: "swd" });
 console.log("Bot started");
 bot.start(function (ctx) {
     return ctx.reply("This message show when you use the /start command on the bot");
@@ -46,8 +47,9 @@ bot.on("message", function (ctx) {
     totalSizeKB += messageSizeKB;
     console.log("Contenuto del messaggio:", ctx.message);
     var totalSizeBytes = totalSizeKB * 1024;
-    var emissions = oneByte.perByte(totalSizeBytes);
-    ctx.reply("La dimensione del messaggio \u00E8 di ".concat(messageSizeKB, " KB. Totale messaggi: ").concat(totalMessages, ". Peso totale: ").concat(totalSizeKB.toFixed(3), "Kb e le emissioni di CO2 associate sono di ").concat(emissions, " g."));
+    var emissionsOneByteMethod = oneByte.perByte(totalSizeBytes);
+    var emissionsSWDMethod = swd.perByte(totalSizeBytes);
+    ctx.reply("La dimensione del messaggio \u00E8 di ".concat(messageSizeKB, " KB. Totale messaggi: ").concat(totalMessages, ". Peso totale: ").concat(totalSizeKB.toFixed(3), "Kb e le emissioni di CO2 associate sono di ").concat(emissionsOneByteMethod, " g. invece con il metodo SWD sono di ").concat(emissionsSWDMethod, " g."));
     ctx.reply("Contenuto totale di ctx.message:".concat(JSON.stringify(ctx.message)));
 });
 bot.launch();
