@@ -31,6 +31,8 @@ const calculateMessageSizeKB = (message) => {
 };
 const { co2 } = require("@tgwf/co2");
 const oneByte = new co2({ model: "1byte" });
+const swd = new co2({ model: "swd" });
+
 console.log("Bot started");
 bot.start((ctx) =>
   ctx.reply("This message show when you use the /start command on the bot")
@@ -47,12 +49,13 @@ bot.on("message", (ctx) => {
   console.log("Contenuto del messaggio:", ctx.message);
 
   const totalSizeBytes = totalSizeKB * 1024;
-  const emissions = oneByte.perByte(totalSizeBytes);
+  const emissionsOneByteMethod = oneByte.perByte(totalSizeBytes);
+  const emissionsSWDMethod = swd.perByte(totalSizeBytes);
 
   ctx.reply(
     `La dimensione del messaggio è di ${messageSizeKB} KB. Totale messaggi: ${totalMessages}. Peso totale: ${totalSizeKB.toFixed(
       3
-    )}Kb e le emissioni di CO2 associate sono di ${emissions} g.`
+    )}Kb e le emissioni di CO2 associate sono di ${emissionsOneByteMethod} g. invece con il metodo SWD sono di ${emissionsSWDMethod} g.`
   );
   ctx.reply(`Contenuto totale di ctx.message:${JSON.stringify(ctx.message)}`);
 });

@@ -1,0 +1,83 @@
+require('dotenv').config();
+const express = require('express');
+const { Telegraf } = require('telegraf');
+const axios = require('axios');
+const { co2 } = require('@tgwf/co2');
+
+const app = express();
+const bot = new Telegraf(process.env.BOT_TOKEN);
+
+// Mappa per memorizzare le statistiche per ogni gruppo
+const groupStats = new Map();
+
+// Funzione per calcolare la dimensione del messaggio in byte
+const calculateMessageSizeBytes = (message) => {
+  if (message.text) {
+    return Buffer.byteLength(message.text, 'utf8');
+  } else if (message.photo) {
+    return message.photo[message.photo.length - 1].file_size;
+  } else if (message.voice) {
+    return message.voice.file_size;
+  } else if (message.video) {
+    return message.video.file_size;
+  } else if (message.document) {
+    return message.document.file_size;
+  } else {
+    return 0;
+  }
+};
+
+// Comandi di base del bot
+bot.start((ctx) =>
+  ctx.reply('This message shows when you use the /start command on the bot')
+);
+bot.help((ctx) =>
+  ctx.reply('This message shows when you use the /help command on the bot')
+);
+
+// Gestione dei messaggi
+bot.on('message', (ctx) => {
+  const chatId = ctx.message.chat.id;
+  if (!groupStats.has(chatId)) {
+    groupStats.set(chatId, { totalMessages: 0, totalSizeBytes: 0, totalCO2: 0 });
+  }
+
+  const stats = groupStats.get(chatId);
+  stats.totalMessages++;
+  const messageSizeBytes = calculateMessageSizeBytes(ctx.message); // Calcola la dimensione del messaggio in Byte
+  stats.totalSizeBytes += messageSizeBytes;
+  const emissions = new co2({ model: '1byte' }).perByte(messageSizeBytes); // Calcola le emissioni di CO2
+  stats.totalCO2 += emissions;
+
+  groupStats.set(chatId, stats);
+
+  ctx.reply(
+    `La dimensione del messaggio è di ${(messageSizeBytes / 1024).toFixed(3)} KB. Totale messaggi: ${stats.totalMessages}. Peso totale: ${(stats.totalSizeBytes / 1024).toFixed(
+      3
+    )} KB e le emissioni di CO2 associate sono di ${stats.totalCO2.toFixed(6)} kg.`
+  );
+});
+
+// Funzione per inviare i report ogni ora
+const sendHourlyReports = async () => {
+  for (const [chatId, stats] of groupStats.entries()) {
+    try {
+      await axios.post('http://localhost:3000/api/reports/hourly', {
+        groupId: chatId,
+        totalMessages: stats.totalMessages,
+        totalSizeBytes: stats.totalSizeBytes,
+        totalCO2: stats.totalCO2
+      });
+
+      // Reset stats for the new hour
+      groupStats.set(chatId, { totalMessages: 0, totalSizeBytes: 0, totalCO2: 0 });
+    } catch (error) {
+      console.error('Error saving report:', error);
+    }
+  }
+};
+
+// Funzione per ottenere il prossimo scoccare dell'ora
+const getNextHour = () => {
+  const now = new Date();
+  return new Date(now.getFullYear(), now.getMonth(), now.getDat
