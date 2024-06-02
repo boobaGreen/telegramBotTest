@@ -52,7 +52,7 @@ bot.on("message", (ctx) => {
   ctx.reply(
     `La dimensione del messaggio è di ${messageSizeKB} KB. Totale messaggi: ${totalMessages}. Peso totale: ${totalSizeKB.toFixed(
       3
-    )} e le emissioni di CO2 associate sono di ${emissions} g.`
+    )}Kb e le emissioni di CO2 associate sono di ${emissions} g.`
   );
   ctx.reply(`Contenuto totale di ctx.message:${JSON.stringify(ctx.message)}`);
 });

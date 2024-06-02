@@ -47,7 +47,7 @@ bot.on("message", function (ctx) {
     console.log("Contenuto del messaggio:", ctx.message);
     var totalSizeBytes = totalSizeKB * 1024;
     var emissions = oneByte.perByte(totalSizeBytes);
-    ctx.reply("La dimensione del messaggio \u00E8 di ".concat(messageSizeKB, " KB. Totale messaggi: ").concat(totalMessages, ". Peso totale: ").concat(totalSizeKB.toFixed(3), " e le emissioni di CO2 associate sono di ").concat(emissions, " g."));
+    ctx.reply("La dimensione del messaggio \u00E8 di ".concat(messageSizeKB, " KB. Totale messaggi: ").concat(totalMessages, ". Peso totale: ").concat(totalSizeKB.toFixed(3), "Kb e le emissioni di CO2 associate sono di ").concat(emissions, " g."));
     ctx.reply("Contenuto totale di ctx.message:".concat(JSON.stringify(ctx.message)));
 });
 bot.launch();
