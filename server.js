@@ -1,64 +1,98 @@
 require("dotenv").config(); // Carica le variabili di ambiente da .env
-var express = require("express");
-var Telegraf = require("telegraf").Telegraf;
-var app = express();
-// const bot = new Telegraf(process.env.BOT_TOKEN);
-var bot = new Telegraf("7317510692:AAF20M_I-Gz8g8PCnbE3fPjCnwRM9cKF784");
-var totalMessages = 0;
-var totalSizeKB = 0;
-var calculateMessageSizeKB = function (message) {
-    if (message.text) {
-        var messageSizeBytes = Buffer.byteLength(message.text, "utf8");
-        return (messageSizeBytes / 1024).toFixed(3);
-    }
-    else if (message.photo) {
-        var photoSizeBytes = message.photo[message.photo.length - 1].file_size;
-        return (photoSizeBytes / 1024).toFixed(3);
-    }
-    else if (message.voice) {
-        var voiceSizeBytes = message.voice.file_size;
-        return (voiceSizeBytes / 1024).toFixed(3);
-    }
-    else if (message.video) {
-        var videoSizeBytes = message.video.file_size;
-        return (videoSizeBytes / 1024).toFixed(3);
-    }
-    else if (message.document) {
-        var documentSizeBytes = message.document.file_size;
-        return (documentSizeBytes / 1024).toFixed(3);
-    }
-    else {
-        return "Tipo di messaggio non supportato";
-    }
+const express = require("express");
+const { Telegraf } = require("telegraf");
+const axios = require("axios");
+
+const app = express();
+const bot = new Telegraf("7317510692:AAF20M_I-Gz8g8PCnbE3fPjCnwRM9cKF784");
+
+const BOT_API_TOKEN = "your_bot_api_token"; // Sostituisci con il token API effettivo
+
+let totalMessages = 0;
+let totalSizeKB = 0;
+
+const calculateMessageSizeKB = (message) => {
+  if (message.text) {
+    const messageSizeBytes = Buffer.byteLength(message.text, "utf8");
+    return (messageSizeBytes / 1024).toFixed(3);
+  } else if (message.photo) {
+    const photoSizeBytes = message.photo[message.photo.length - 1].file_size;
+    return (photoSizeBytes / 1024).toFixed(3);
+  } else if (message.voice) {
+    const voiceSizeBytes = message.voice.file_size;
+    return (voiceSizeBytes / 1024).toFixed(3);
+  } else if (message.video) {
+    const videoSizeBytes = message.video.file_size;
+    return (videoSizeBytes / 1024).toFixed(3);
+  } else if (message.document) {
+    const documentSizeBytes = message.document.file_size;
+    return (documentSizeBytes / 1024).toFixed(3);
+  } else {
+    return "Tipo di messaggio non supportato";
+  }
 };
-var co2 = require("@tgwf/co2").co2;
-var oneByte = new co2({ model: "1byte" });
-var swd = new co2({ model: "swd" });
+
+const { co2 } = require("@tgwf/co2");
+const oneByte = new co2({ model: "1byte" });
+const swd = new co2({ model: "swd" });
+
 console.log("Bot started");
-bot.start(function (ctx) {
-    return ctx.reply("This message show when you use the /start command on the bot");
+
+bot.start((ctx) =>
+  ctx.reply("This message show when you use the /start command on the bot")
+);
+bot.help((ctx) =>
+  ctx.reply("This message show when you use the /help command on the bot")
+);
+
+bot.on("message", (ctx) => {
+  totalMessages++;
+  const messageSizeKB = parseFloat(calculateMessageSizeKB(ctx.message)); // Calcola la dimensione del messaggio in KB
+  totalSizeKB += messageSizeKB;
+  console.log("Contenuto del messaggio:", ctx.message);
+  const totalSizeBytes = totalSizeKB * 1024;
+  const emissionsOneByteMethod = oneByte.perByte(totalSizeBytes);
+  const emissionsSWDMethod = swd.perByte(totalSizeBytes);
+  ctx.reply(
+    `La dimensione del messaggio è di ${messageSizeKB} KB. Totale messaggi: ${totalMessages}. Peso totale: ${totalSizeKB.toFixed(
+      3
+    )}Kb e le emissioni di CO2 associate sono di ${emissionsOneByteMethod} g. invece con il metodo SWD sono di ${emissionsSWDMethod} g.`
+  );
+  ctx.reply(`Contenuto totale di ctx.message:${JSON.stringify(ctx.message)}`);
+
+  // Invia il report al server
+  const reportPayload = {
+    groupId: ctx.chat.id,
+    participants: ctx.chat.participants_count || 0, // o qualsiasi altro valore disponibile
+    totalMessages: totalMessages,
+    totalSizeBytes: totalSizeBytes,
+    totalCO2: emissionsOneByteMethod + emissionsSWDMethod, // Esempio di calcolo totale CO2
+    timestamp: new Date(),
+  };
+
+  axios
+    .post("http://yourserver.com/api/v1/reports", reportPayload, {
+      headers: {
+        Authorization: `Bearer ${BOT_API_TOKEN}`,
+      },
+    })
+    .then((response) => {
+      console.log("Report inviato con successo:", response.data);
+    })
+    .catch((error) => {
+      console.error("Errore durante l'invio del report:", error.message);
+    });
 });
-bot.help(function (ctx) {
-    return ctx.reply("This message show when you use the /help command on the bot");
-});
-bot.on("message", function (ctx) {
-    totalMessages++;
-    var messageSizeKB = parseFloat(calculateMessageSizeKB(ctx.message)); // Calcola la dimensione del messaggio in KB
-    totalSizeKB += messageSizeKB;
-    console.log("Contenuto del messaggio:", ctx.message);
-    var totalSizeBytes = totalSizeKB * 1024;
-    var emissionsOneByteMethod = oneByte.perByte(totalSizeBytes);
-    var emissionsSWDMethod = swd.perByte(totalSizeBytes);
-    ctx.reply("La dimensione del messaggio \u00E8 di ".concat(messageSizeKB, " KB. Totale messaggi: ").concat(totalMessages, ". Peso totale: ").concat(totalSizeKB.toFixed(3), "Kb e le emissioni di CO2 associate sono di ").concat(emissionsOneByteMethod, " g. invece con il metodo SWD sono di ").concat(emissionsSWDMethod, " g."));
-    ctx.reply("Contenuto totale di ctx.message:".concat(JSON.stringify(ctx.message)));
-});
+
 bot.launch();
+
 // Imposta una semplice rotta per verificare che il server sia in esecuzione
-app.get("/", function (req, res) {
-    res.send("Server is running and bot is active. grammi version");
+app.get("/", (req, res) => {
+  res.send("Server is running and bot is active. grammi version");
 });
+
 // Avvia il server Express
-var PORT = process.env.PORT || 3000;
-app.listen(PORT, function () {
-    console.log("Server is running on port ".concat(PORT));
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
