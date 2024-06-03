@@ -31,4 +31,3 @@ jobs:
           deployment_package: bot-server-co2.zip
           use_existing_version_if_available: true
           wait_for_deployment: true
-          recovery_wait_time: 120 # Aumenta il tempo di attesa a 120 secondi
