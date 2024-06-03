@@ -3,7 +3,7 @@ name: CICD
 on:
   push:
     branches:
-      - aws6
+      - bot-aggiunta-back-end-api
 
 jobs:
   build-and-deploy:
