@@ -120,7 +120,7 @@ bot.on("message", (ctx: typeof Context) => {
 bot.launch();
 
 app.get("/", (_req: any, res: { send: (arg0: string) => void }) => {
-  res.send("Server is running and bot is active. grammi version");
+  res.send("Server is running and bot is active. grammi version aws ok double");
 });
 
 const PORT = process.env.PORT || 3000;
