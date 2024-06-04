@@ -24,21 +24,10 @@ enum Weekday {
 }
 interface ReportPayload {
   groupId: string;
-  groupName: string;
   totalMessages: number;
   totalSizeKB: number;
-  emissionsOneByteMethod?: EmissionsMethod; // Use enum type
-  emissionsSWDMethod?: EmissionsMethod; // Use enum type
-  timestampDetails: {
-    timestamp: string;
-    hourOfDay: number;
-    date: {
-      day: number;
-      month: number;
-      year: number;
-      weekday: Weekday; // Use enum type
-    };
-  };
+  emissionsOneByteMethod: number;
+  emissionsSWDMethod: number;
 }
 
 let groupStats: Record<string, { totalMessages: number; totalSizeKB: number }> =
@@ -141,14 +130,12 @@ app.listen(PORT, async () => {
       try {
         const payload: ReportPayload = {
           groupId: chatId,
-          groupName: "GroupNamePlaceholder",
           totalMessages: stats.totalMessages,
           totalSizeKB: stats.totalSizeKB,
           emissionsOneByteMethod: emissionsOneByteMethod.toFixed(3),
           emissionsSWDMethod: emissionsSWDMethod.toFixed(3),
-          timestampDetails,
         };
-
+        console.log("payload", payload);
         const response = await axios.post<ReportPayload>(
           reportEndpoint,
           payload

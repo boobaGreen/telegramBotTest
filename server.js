@@ -151,13 +151,12 @@ app.listen(PORT, function () { return __awaiter(void 0, void 0, void 0, function
                         _c.trys.push([2, 4, , 5]);
                         payload = {
                             groupId: chatId,
-                            groupName: "GroupNamePlaceholder",
                             totalMessages: stats.totalMessages,
                             totalSizeKB: stats.totalSizeKB,
                             emissionsOneByteMethod: emissionsOneByteMethod.toFixed(3),
                             emissionsSWDMethod: emissionsSWDMethod.toFixed(3),
-                            timestampDetails: timestampDetails,
                         };
+                        console.log("payload", payload);
                         return [4 /*yield*/, axios_1.default.post(reportEndpoint, payload)];
                     case 3:
                         response = _c.sent();
