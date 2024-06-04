@@ -8,20 +8,7 @@ const cron = require("node-cron");
 
 const app = express();
 const bot = new Telegraf("7317510692:AAF20M_I-Gz8g8PCnbE3fPjCnwRM9cKF784");
-enum EmissionsMethod {
-  "OneByte",
-  "SWD",
-}
 
-enum Weekday {
-  "Sunday",
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday",
-}
 interface ReportPayload {
   groupId: string;
   totalMessages: number;
@@ -52,21 +39,6 @@ const calculateMessageSizeKB = (message: any) => {
   } else {
     return "Tipo di messaggio non supportato";
   }
-};
-
-const getTimestampDetails = () => {
-  const timestamp = new Date().toISOString();
-  const hourOfDay = new Date().getUTCHours();
-  const date = {
-    day: new Date().getUTCDate(),
-    month: new Date().getUTCMonth() + 1,
-    year: new Date().getUTCFullYear(),
-    weekday: new Date().toLocaleDateString("en-US", {
-      weekday: "long",
-    }) as unknown as Weekday, // Cast to Weekday
-  };
-
-  return { timestamp, hourOfDay, date };
 };
 
 const { co2 } = require("@tgwf/co2");
@@ -120,8 +92,6 @@ app.listen(PORT, async () => {
   const reportEndpoint = `http://co2-back.us-west-2.elasticbeanstalk.com/api/v1/reports`;
 
   const sendReport = async () => {
-    const timestampDetails = getTimestampDetails();
-
     for (const [chatId, stats] of Object.entries(groupStats)) {
       const totalSizeBytes = stats.totalSizeKB * 1024;
       const emissionsOneByteMethod = oneByte.perByte(totalSizeBytes);

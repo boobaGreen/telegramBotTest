@@ -43,21 +43,6 @@ var axios_1 = require("axios");
 var cron = require("node-cron");
 var app = express();
 var bot = new Telegraf("7317510692:AAF20M_I-Gz8g8PCnbE3fPjCnwRM9cKF784");
-var EmissionsMethod;
-(function (EmissionsMethod) {
-    EmissionsMethod[EmissionsMethod["OneByte"] = 0] = "OneByte";
-    EmissionsMethod[EmissionsMethod["SWD"] = 1] = "SWD";
-})(EmissionsMethod || (EmissionsMethod = {}));
-var Weekday;
-(function (Weekday) {
-    Weekday[Weekday["Sunday"] = 0] = "Sunday";
-    Weekday[Weekday["Monday"] = 1] = "Monday";
-    Weekday[Weekday["Tuesday"] = 2] = "Tuesday";
-    Weekday[Weekday["Wednesday"] = 3] = "Wednesday";
-    Weekday[Weekday["Thursday"] = 4] = "Thursday";
-    Weekday[Weekday["Friday"] = 5] = "Friday";
-    Weekday[Weekday["Saturday"] = 6] = "Saturday";
-})(Weekday || (Weekday = {}));
 var groupStats = {};
 var calculateMessageSizeKB = function (message) {
     if (message.text) {
@@ -83,19 +68,6 @@ var calculateMessageSizeKB = function (message) {
     else {
         return "Tipo di messaggio non supportato";
     }
-};
-var getTimestampDetails = function () {
-    var timestamp = new Date().toISOString();
-    var hourOfDay = new Date().getUTCHours();
-    var date = {
-        day: new Date().getUTCDate(),
-        month: new Date().getUTCMonth() + 1,
-        year: new Date().getUTCFullYear(),
-        weekday: new Date().toLocaleDateString("en-US", {
-            weekday: "long",
-        }), // Cast to Weekday
-    };
-    return { timestamp: timestamp, hourOfDay: hourOfDay, date: date };
 };
 var co2 = require("@tgwf/co2").co2;
 var oneByte = new co2({ model: "1byte" });
@@ -133,11 +105,10 @@ app.listen(PORT, function () { return __awaiter(void 0, void 0, void 0, function
         console.log("Server is running on port ".concat(PORT));
         reportEndpoint = "http://co2-back.us-west-2.elasticbeanstalk.com/api/v1/reports";
         sendReport = function () { return __awaiter(void 0, void 0, void 0, function () {
-            var timestampDetails, _i, _a, _b, chatId, stats, totalSizeBytes, emissionsOneByteMethod, emissionsSWDMethod, payload, response, error_1;
+            var _i, _a, _b, chatId, stats, totalSizeBytes, emissionsOneByteMethod, emissionsSWDMethod, payload, response, error_1;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
-                        timestampDetails = getTimestampDetails();
                         _i = 0, _a = Object.entries(groupStats);
                         _c.label = 1;
                     case 1:
