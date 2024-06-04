@@ -124,7 +124,7 @@ bot.on("message", function (ctx) {
 });
 bot.launch();
 app.get("/", function (_req, res) {
-    res.send("Server is running and bot is active. grammi version");
+    res.send("Server is running and bot is active. grammi version aws ok double");
 });
 var PORT = process.env.PORT || 3000;
 app.listen(PORT, function () { return __awaiter(void 0, void 0, void 0, function () {
