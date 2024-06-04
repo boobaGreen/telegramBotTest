@@ -41,9 +41,23 @@ var express = require("express");
 var _a = require("telegraf"), Telegraf = _a.Telegraf, Context = _a.Context;
 var axios_1 = require("axios");
 var cron = require("node-cron");
-var localtunnel = require("localtunnel");
 var app = express();
 var bot = new Telegraf("7317510692:AAF20M_I-Gz8g8PCnbE3fPjCnwRM9cKF784");
+var EmissionsMethod;
+(function (EmissionsMethod) {
+    EmissionsMethod[EmissionsMethod["OneByte"] = 0] = "OneByte";
+    EmissionsMethod[EmissionsMethod["SWD"] = 1] = "SWD";
+})(EmissionsMethod || (EmissionsMethod = {}));
+var Weekday;
+(function (Weekday) {
+    Weekday[Weekday["Sunday"] = 0] = "Sunday";
+    Weekday[Weekday["Monday"] = 1] = "Monday";
+    Weekday[Weekday["Tuesday"] = 2] = "Tuesday";
+    Weekday[Weekday["Wednesday"] = 3] = "Wednesday";
+    Weekday[Weekday["Thursday"] = 4] = "Thursday";
+    Weekday[Weekday["Friday"] = 5] = "Friday";
+    Weekday[Weekday["Saturday"] = 6] = "Saturday";
+})(Weekday || (Weekday = {}));
 var groupStats = {};
 var calculateMessageSizeKB = function (message) {
     if (message.text) {
@@ -77,7 +91,9 @@ var getTimestampDetails = function () {
         day: new Date().getUTCDate(),
         month: new Date().getUTCMonth() + 1,
         year: new Date().getUTCFullYear(),
-        weekday: new Date().toLocaleDateString("en-US", { weekday: "long" }),
+        weekday: new Date().toLocaleDateString("en-US", {
+            weekday: "long",
+        }), // Cast to Weekday
     };
     return { timestamp: timestamp, hourOfDay: hourOfDay, date: date };
 };
@@ -112,71 +128,61 @@ app.get("/", function (_req, res) {
 });
 var PORT = process.env.PORT || 3000;
 app.listen(PORT, function () { return __awaiter(void 0, void 0, void 0, function () {
-    var tunnel, reportEndpoint, sendReport;
+    var reportEndpoint, sendReport;
     return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                console.log("Server is running on port ".concat(PORT));
-                return [4 /*yield*/, localtunnel({ port: PORT })];
-            case 1:
-                tunnel = _a.sent();
-                console.log("Localtunnel is running at ".concat(tunnel.url));
-                reportEndpoint = "".concat(tunnel.url, "/api/v1/reports");
-                sendReport = function () { return __awaiter(void 0, void 0, void 0, function () {
-                    var timestampDetails, _i, _a, _b, chatId, stats, totalSizeBytes, emissionsOneByteMethod, emissionsSWDMethod, payload, response, error_1;
-                    return __generator(this, function (_c) {
-                        switch (_c.label) {
-                            case 0:
-                                timestampDetails = getTimestampDetails();
-                                _i = 0, _a = Object.entries(groupStats);
-                                _c.label = 1;
-                            case 1:
-                                if (!(_i < _a.length)) return [3 /*break*/, 6];
-                                _b = _a[_i], chatId = _b[0], stats = _b[1];
-                                totalSizeBytes = stats.totalSizeKB * 1024;
-                                emissionsOneByteMethod = oneByte.perByte(totalSizeBytes);
-                                emissionsSWDMethod = swd.perByte(totalSizeBytes);
-                                _c.label = 2;
-                            case 2:
-                                _c.trys.push([2, 4, , 5]);
-                                payload = {
-                                    groupId: chatId,
-                                    groupName: "GroupNamePlaceholder",
-                                    totalMessages: stats.totalMessages,
-                                    totalSizeKB: stats.totalSizeKB,
-                                    emissionsOneByteMethod: emissionsOneByteMethod.toFixed(3),
-                                    emissionsSWDMethod: emissionsSWDMethod.toFixed(3),
-                                    timestampDetails: timestampDetails,
-                                };
-                                return [4 /*yield*/, axios_1.default.post(reportEndpoint, payload)];
-                            case 3:
-                                response = _c.sent();
-                                console.log("Report inviato con successo:", response.data);
-                                return [3 /*break*/, 5];
-                            case 4:
-                                error_1 = _c.sent();
-                                if (error_1 instanceof Error) {
-                                    console.error("Errore durante l'invio del report:", error_1.message);
-                                }
-                                else {
-                                    console.error("Errore durante l'invio del report:", error_1);
-                                }
-                                return [3 /*break*/, 5];
-                            case 5:
-                                _i++;
-                                return [3 /*break*/, 1];
-                            case 6: return [2 /*return*/];
+        console.log("Server is running on port ".concat(PORT));
+        reportEndpoint = "http://co2-back.us-west-2.elasticbeanstalk.com/reports";
+        sendReport = function () { return __awaiter(void 0, void 0, void 0, function () {
+            var timestampDetails, _i, _a, _b, chatId, stats, totalSizeBytes, emissionsOneByteMethod, emissionsSWDMethod, payload, response, error_1;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        timestampDetails = getTimestampDetails();
+                        _i = 0, _a = Object.entries(groupStats);
+                        _c.label = 1;
+                    case 1:
+                        if (!(_i < _a.length)) return [3 /*break*/, 6];
+                        _b = _a[_i], chatId = _b[0], stats = _b[1];
+                        totalSizeBytes = stats.totalSizeKB * 1024;
+                        emissionsOneByteMethod = oneByte.perByte(totalSizeBytes);
+                        emissionsSWDMethod = swd.perByte(totalSizeBytes);
+                        _c.label = 2;
+                    case 2:
+                        _c.trys.push([2, 4, , 5]);
+                        payload = {
+                            groupId: chatId,
+                            groupName: "GroupNamePlaceholder",
+                            totalMessages: stats.totalMessages,
+                            totalSizeKB: stats.totalSizeKB,
+                            emissionsOneByteMethod: emissionsOneByteMethod.toFixed(3),
+                            emissionsSWDMethod: emissionsSWDMethod.toFixed(3),
+                            timestampDetails: timestampDetails,
+                        };
+                        return [4 /*yield*/, axios_1.default.post(reportEndpoint, payload)];
+                    case 3:
+                        response = _c.sent();
+                        console.log("Report inviato con successo:", response.data);
+                        return [3 /*break*/, 5];
+                    case 4:
+                        error_1 = _c.sent();
+                        if (error_1 instanceof Error) {
+                            console.error("Errore durante l'invio del report:", error_1.message);
                         }
-                    });
-                }); };
-                cron.schedule("0 * * * *", function () {
-                    console.log("Esecuzione del job di invio report ogni ora");
-                    sendReport();
-                });
-                tunnel.on("close", function () {
-                    console.log("Tunnel chiuso");
-                });
-                return [2 /*return*/];
-        }
+                        else {
+                            console.error("Errore durante l'invio del report:", error_1);
+                        }
+                        return [3 /*break*/, 5];
+                    case 5:
+                        _i++;
+                        return [3 /*break*/, 1];
+                    case 6: return [2 /*return*/];
+                }
+            });
+        }); };
+        cron.schedule("*/5 * * * *", function () {
+            console.log("Esecuzione del job di invio report ogni 5 minuti");
+            sendReport();
+        });
+        return [2 /*return*/];
     });
 }); });

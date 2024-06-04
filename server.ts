@@ -5,18 +5,30 @@ const { Telegraf, Context } = require("telegraf");
 import axios from "axios";
 
 const cron = require("node-cron");
-const localtunnel = require("localtunnel");
 
 const app = express();
 const bot = new Telegraf("7317510692:AAF20M_I-Gz8g8PCnbE3fPjCnwRM9cKF784");
+enum EmissionsMethod {
+  "OneByte",
+  "SWD",
+}
 
+enum Weekday {
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+}
 interface ReportPayload {
   groupId: string;
   groupName: string;
   totalMessages: number;
   totalSizeKB: number;
-  emissionsOneByteMethod: string;
-  emissionsSWDMethod: string;
+  emissionsOneByteMethod?: EmissionsMethod; // Use enum type
+  emissionsSWDMethod?: EmissionsMethod; // Use enum type
   timestampDetails: {
     timestamp: string;
     hourOfDay: number;
@@ -24,7 +36,7 @@ interface ReportPayload {
       day: number;
       month: number;
       year: number;
-      weekday: string;
+      weekday: Weekday; // Use enum type
     };
   };
 }
@@ -60,7 +72,9 @@ const getTimestampDetails = () => {
     day: new Date().getUTCDate(),
     month: new Date().getUTCMonth() + 1,
     year: new Date().getUTCFullYear(),
-    weekday: new Date().toLocaleDateString("en-US", { weekday: "long" }),
+    weekday: new Date().toLocaleDateString("en-US", {
+      weekday: "long",
+    }) as unknown as Weekday, // Cast to Weekday
   };
 
   return { timestamp, hourOfDay, date };
@@ -112,10 +126,9 @@ app.get("/", (_req: any, res: { send: (arg0: string) => void }) => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, async () => {
   console.log(`Server is running on port ${PORT}`);
-  const tunnel = await localtunnel({ port: PORT });
-  console.log(`Localtunnel is running at ${tunnel.url}`);
 
-  const reportEndpoint = `${tunnel.url}/api/v1/reports`;
+  // Usa l'endpoint del backend reale come placeholder
+  const reportEndpoint = `http://co2-back.us-west-2.elasticbeanstalk.com/api/v1/reports`;
 
   const sendReport = async () => {
     const timestampDetails = getTimestampDetails();
@@ -151,12 +164,8 @@ app.listen(PORT, async () => {
     }
   };
 
-  cron.schedule("0 * * * *", () => {
-    console.log("Esecuzione del job di invio report ogni ora");
+  cron.schedule("*/5 * * * *", () => {
+    console.log("Esecuzione del job di invio report ogni 5 minuti");
     sendReport();
-  });
-
-  tunnel.on("close", () => {
-    console.log("Tunnel chiuso");
   });
 });
