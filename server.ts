@@ -7,7 +7,8 @@ import axios from "axios";
 const cron = require("node-cron");
 
 const app = express();
-const bot = new Telegraf("7317510692:AAF20M_I-Gz8g8PCnbE3fPjCnwRM9cKF784");
+// const bot = new Telegraf("7317510692:AAF20M_I-Gz8g8PCnbE3fPjCnwRM9cKF784");
+const bot = new Telegraf("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
 enum EmissionsMethod {
   "OneByte",
   "SWD",

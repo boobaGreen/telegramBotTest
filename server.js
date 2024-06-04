@@ -42,7 +42,8 @@ var _a = require("telegraf"), Telegraf = _a.Telegraf, Context = _a.Context;
 var axios_1 = require("axios");
 var cron = require("node-cron");
 var app = express();
-var bot = new Telegraf("7317510692:AAF20M_I-Gz8g8PCnbE3fPjCnwRM9cKF784");
+// const bot = new Telegraf("7317510692:AAF20M_I-Gz8g8PCnbE3fPjCnwRM9cKF784");
+var bot = new Telegraf("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
 var EmissionsMethod;
 (function (EmissionsMethod) {
     EmissionsMethod[EmissionsMethod["OneByte"] = 0] = "OneByte";
