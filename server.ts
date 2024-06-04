@@ -15,6 +15,8 @@ interface ReportPayload {
   totalSizeKB: number;
   emissionsOneByteMethod: number;
   emissionsSWDMethod: number;
+  groupName?: string;
+  participantsCount?: number;
 }
 
 let groupStats: Record<string, { totalMessages: number; totalSizeKB: number }> =
