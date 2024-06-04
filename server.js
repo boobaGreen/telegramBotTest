@@ -103,7 +103,7 @@ app.listen(PORT, function () { return __awaiter(void 0, void 0, void 0, function
     var reportEndpoint, sendReport;
     return __generator(this, function (_a) {
         console.log("Server is running on port ".concat(PORT));
-        reportEndpoint = "http://co2-back.us-west-2.elasticbeanstalk.com/api/v1/reports";
+        reportEndpoint = "http://localhost:3005/api/v1/reports";
         sendReport = function () { return __awaiter(void 0, void 0, void 0, function () {
             var _i, _a, _b, chatId, stats, totalSizeBytes, emissionsOneByteMethod, emissionsSWDMethod, payload, response, error_1;
             return __generator(this, function (_c) {
@@ -115,8 +115,8 @@ app.listen(PORT, function () { return __awaiter(void 0, void 0, void 0, function
                         if (!(_i < _a.length)) return [3 /*break*/, 6];
                         _b = _a[_i], chatId = _b[0], stats = _b[1];
                         totalSizeBytes = stats.totalSizeKB * 1024;
-                        emissionsOneByteMethod = oneByte.perByte(totalSizeBytes);
-                        emissionsSWDMethod = swd.perByte(totalSizeBytes);
+                        emissionsOneByteMethod = oneByte.perByte(totalSizeBytes).toFixed(3);
+                        emissionsSWDMethod = swd.perByte(totalSizeBytes).toFixed(3);
                         _c.label = 2;
                     case 2:
                         _c.trys.push([2, 4, , 5]);
@@ -124,10 +124,12 @@ app.listen(PORT, function () { return __awaiter(void 0, void 0, void 0, function
                             groupId: chatId,
                             totalMessages: stats.totalMessages,
                             totalSizeKB: stats.totalSizeKB,
-                            emissionsOneByteMethod: emissionsOneByteMethod.toFixed(3),
-                            emissionsSWDMethod: emissionsSWDMethod.toFixed(3),
+                            emissionsOneByteMethod: emissionsOneByteMethod,
+                            emissionsSWDMethod: emissionsSWDMethod,
                         };
                         console.log("payload", payload);
+                        console.log("type of emissionsone", typeof emissionsOneByteMethod);
+                        console.log("type of emissionswd", typeof emissionsSWDMethod);
                         return [4 /*yield*/, axios_1.default.post(reportEndpoint, payload)];
                     case 3:
                         response = _c.sent();
@@ -136,10 +138,10 @@ app.listen(PORT, function () { return __awaiter(void 0, void 0, void 0, function
                     case 4:
                         error_1 = _c.sent();
                         if (error_1 instanceof Error) {
-                            console.error("Errore durante l'invio del report:", error_1.message);
+                            console.error("Errore durante l'invio del report if:", error_1.message);
                         }
                         else {
-                            console.error("Errore durante l'invio del report:", error_1);
+                            console.error("Errore durante l'invio del report else:", error_1);
                         }
                         return [3 /*break*/, 5];
                     case 5:
@@ -149,8 +151,8 @@ app.listen(PORT, function () { return __awaiter(void 0, void 0, void 0, function
                 }
             });
         }); };
-        cron.schedule("*/5 * * * *", function () {
-            console.log("Esecuzione del job di invio report ogni 5 minuti !");
+        cron.schedule("* * * * *", function () {
+            console.log("Esecuzione del job di invio report ogni minuto !");
             sendReport();
         });
         return [2 /*return*/];
