@@ -131,7 +131,7 @@ app.listen(PORT, function () { return __awaiter(void 0, void 0, void 0, function
     var reportEndpoint, sendReport;
     return __generator(this, function (_a) {
         console.log("Server is running on port ".concat(PORT));
-        reportEndpoint = "http://co2-back.us-west-2.elasticbeanstalk.com/reports";
+        reportEndpoint = "http://co2-back.us-west-2.elasticbeanstalk.com/api/v1/reports";
         sendReport = function () { return __awaiter(void 0, void 0, void 0, function () {
             var timestampDetails, _i, _a, _b, chatId, stats, totalSizeBytes, emissionsOneByteMethod, emissionsSWDMethod, payload, response, error_1;
             return __generator(this, function (_c) {
@@ -180,7 +180,7 @@ app.listen(PORT, function () { return __awaiter(void 0, void 0, void 0, function
             });
         }); };
         cron.schedule("*/5 * * * *", function () {
-            console.log("Esecuzione del job di invio report ogni 5 minuti");
+            console.log("Esecuzione del job di invio report ogni 5 minuti !");
             sendReport();
         });
         return [2 /*return*/];

@@ -165,7 +165,7 @@ app.listen(PORT, async () => {
   };
 
   cron.schedule("*/5 * * * *", () => {
-    console.log("Esecuzione del job di invio report ogni 5 minuti");
+    console.log("Esecuzione del job di invio report ogni 5 minuti !");
     sendReport();
   });
 });
