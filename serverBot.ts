@@ -213,7 +213,7 @@ const sendReport = async () => {
           "Il bot non può inviare messaggi al gruppo. È stato rimosso?"
         );
       } else {
-        console.error("Errore durante l'invio del report:", error);
+        console.error("Errore durante l'invio del report :", error);
       }
     }
   }

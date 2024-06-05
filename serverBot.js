@@ -270,7 +270,7 @@ var sendReport = function () { return __awaiter(_this, void 0, void 0, function 
                     console.error("Il bot non può inviare messaggi al gruppo. È stato rimosso?");
                 }
                 else {
-                    console.error("Errore durante l'invio del report:", error_2);
+                    console.error("Errore durante l'invio del report :", error_2);
                 }
                 return [3 /*break*/, 6];
             case 6:
