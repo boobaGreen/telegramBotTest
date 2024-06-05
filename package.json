@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "tsc server.ts",
-    "start": "node server.js"
+    "build": "tsc --downlevelIteration serverBot.ts",
+    "start": "node serverBot.js"
   },
   "author": "Claudio Dall'Ara",
   "license": "MIT",

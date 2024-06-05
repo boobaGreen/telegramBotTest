@@ -1,1 +1,19 @@
 aws develo : https://www.youtube.com/watch?v=Ji8i_2vinBo
+
+tsc --downlevelIteration server.ts          ---------altrimenti da une errore
+
+-aggiungere funzioni sul bot (divieto di video o immagini se superata media mensile totale o per utemte?)
+
+-aggiungere quindi un campo al gruppo se in linea o bloccato 
+
+-serve il creatore del gruppo x settare limiti non si puo aver forse admin si!
+
+-gestire tuttte queste cose e forse poll + allegati generici- se danno errore e se contati bene :  const messageType = ctx.message.document ? "document" :
+                      ctx.message.photo ? "photo" :
+                      ctx.message.video ? "video" :
+                      ctx.message.voice ? "voice" :
+                      ctx.message.animation ? "animation" :
+                      ctx.message.sticker ? "sticker" :
+
+rimettere 15 min come limite
+

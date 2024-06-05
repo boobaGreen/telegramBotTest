@@ -6,8 +6,9 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "node",
-    "target": "es5",
+    "target": "es2015",
     "lib": ["es6", "dom"],
-    "module": "commonjs"
+    "module": "commonjs",
+    "downlevelIteration": true
   }
 }
