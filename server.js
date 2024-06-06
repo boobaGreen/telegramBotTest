@@ -199,7 +199,7 @@ var sendEmptyReport = function (chatId, chatInfo) { return __awaiter(_this, void
                     groupName: chatInfo.title,
                     participantsCount: chatInfo.membersCount,
                 };
-                reportEndpoint = "http://localhost:3005/api/v1/reports";
+                reportEndpoint = "http://co2-back.us-west-2.elasticbeanstalk.com/reports";
                 return [4 /*yield*/, axios.post(reportEndpoint, payload // Specifica il tipo di payload come ReportPayload
                     )];
             case 2:

@@ -154,8 +154,9 @@ const sendEmptyReport = async (chatId: string | undefined, chatInfo: any) => {
       groupName: chatInfo.title,
       participantsCount: chatInfo.membersCount,
     };
-    const reportEndpoint = `http://co2-back.us-west-2.elasticbeanstalk.com/api/v1/reports`;
-    // const reportEndpoint = `http://localhost:3005/api/v1/reports`;
+    //co2-back.us-west-2.elasticbeanstalk.com/test
+    const reportEndpoint = `http://co2-back.us-west-2.elasticbeanstalk.com/reports`;
+    // const reportEndpoint = `http://localhost:3005/reports`;
     const response = await axios.post(
       reportEndpoint,
       payload as ReportPayload // Specifica il tipo di payload come ReportPayload
