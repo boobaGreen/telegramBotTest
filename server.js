@@ -247,7 +247,7 @@ var sendEmptyReport = function (chatId, chatInfo) { return __awaiter(_this, void
                                     return [4 /*yield*/, axios_1.get("https://api.telegram.org/bot".concat(process.env.BOT_TOKEN, "/getChatMembersCount?chat_id=").concat(chatId))];
                                 case 1:
                                     response = _a.sent();
-                                    console.log("Risposta dal recupero del numero di partecipanti:", response);
+                                    console.log("Risposta dal recupero del numero di partecipanti :", response);
                                     return [2 /*return*/, response.data.result];
                                 case 2:
                                     error_3 = _a.sent();

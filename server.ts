@@ -202,7 +202,7 @@ const sendEmptyReport = async (chatId: string | undefined, chatInfo: any) => {
           );
 
           console.log(
-            "Risposta dal recupero del numero di partecipanti:",
+            "Risposta dal recupero del numero di partecipanti :",
             response
           );
           return response.data.result;
