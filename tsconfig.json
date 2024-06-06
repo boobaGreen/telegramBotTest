@@ -8,7 +8,12 @@
     "moduleResolution": "node",
     "target": "es2015",
     "lib": ["es6", "dom"],
+    "downlevelIteration": true /* AGGIUNTO PER QUESTO PROJ SPECIFICO. */,
     "module": "commonjs",
-    "downlevelIteration": true
+    "rootDir": "src",
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "noImplicitAny": true,
+    "outDir": "build"
   }
 }

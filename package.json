@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "tsc --downlevelIteration server.ts",
-    "start": "node server.js"
+    "build": "npx tsc",
+    "start": "node build/index.js"
   },
   "author": "Claudio Dall'Ara",
   "license": "MIT",
