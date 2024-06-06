@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "tsc --downlevelIteration serverBot.ts",
+    "build": "tsc --downlevelIteration server.ts",
     "start": "node serverBot.js"
   },
   "author": "Claudio Dall'Ara",
