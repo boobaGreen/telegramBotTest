@@ -1,21 +1,19 @@
 const dotenv = require("dotenv");
-dotenv.config({ path: "./config.env" });
-
 const express = require("express");
+const app = express();
+const axios = require("axios");
+const cron = require("node-cron");
 const { Telegraf, Context } = require("telegraf");
-
 const { co2 } = require("@tgwf/co2");
 const oneByte = new co2({ model: "1byte" });
 const swd = new co2({ model: "swd" });
-const axios = require("axios");
-const cron = require("node-cron");
-
-const app = express();
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
 import { calculateMessageSizeKB } from "./utils/getKbSize";
 import { GroupStats, ReportPayload } from "./types/types";
 import { getParticipantsCount } from "./utils/getMemberCount";
+
+dotenv.config({ path: "./config.env" });
 
 let groupStats: Record<string, GroupStats> = {};
 
@@ -23,7 +21,7 @@ const initializeGroupStats = (chatId: string) => {
   groupStats[chatId] = { totalMessages: 0, totalSizeKB: 0 };
 };
 
-console.log("Bot started");
+
 bot.start((ctx: { reply: (arg0: string) => any }) =>
   ctx.reply("Benvenuto! Usa /help per visualizzare l'elenco dei comandi.")
 );
@@ -107,6 +105,11 @@ app.listen(PORT, async () => {
   });
 });
 
+let endPoint = "";
+if (process.env.ENVIRONMENT === "production") {
+  endPoint = process.env.REPORT_ENDPOINT || "http://localhost:3005";
+}
+const finalEndPoint = endPoint + "api/v1/reports";
 const sendEmptyReport = async (chatId: string | undefined, chatInfo: any) => {
   if (!chatId) {
     console.error("Chat ID mancante.");
@@ -124,10 +127,8 @@ const sendEmptyReport = async (chatId: string | undefined, chatInfo: any) => {
       participantsCount: chatInfo.membersCount,
     };
 
-    const reportEndpoint =
-      process.env.REPORT_ENDPOINT || `http://localhost:3005/api/v1/reports`;
     const response = await axios.post(
-      reportEndpoint,
+      finalEndPoint,
       payload as ReportPayload // Specifica il tipo di payload come ReportPayload
     );
   } catch (error) {
@@ -167,11 +168,8 @@ const sendReport = async () => {
         participantsCount, // Aggiungi il numero di partecipanti al payload
       };
 
-      // Invia il report con il numero di partecipanti
-      const reportEndpoint =
-        process.env.REPORT_ENDPOINT || `http://localhost:3005/api/v1/reports`;
       const response = await axios.post(
-        reportEndpoint,
+        finalEndPoint,
         payload as ReportPayload // Specifica il tipo di payload come ReportPayload
       );
 
