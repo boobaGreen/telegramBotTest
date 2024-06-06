@@ -1,4 +1,5 @@
-require("dotenv").config();
+const dotenv = require("dotenv");
+dotenv.config({ path: "./config.env" });
 
 const express = require("express");
 const { Telegraf, Context } = require("telegraf");

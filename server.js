@@ -62,7 +62,8 @@ var __read = (this && this.__read) || function (o, n) {
     return ar;
 };
 var _this = this;
-require("dotenv").config();
+var dotenv = require("dotenv");
+dotenv.config({ path: "./config.env" });
 var express = require("express");
 var _a = require("telegraf"), Telegraf = _a.Telegraf, Context = _a.Context;
 var co2 = require("@tgwf/co2").co2;
