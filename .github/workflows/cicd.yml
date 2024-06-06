@@ -18,14 +18,14 @@ jobs:
       - name: Install Dependencies
         run: npm install
       - name: Genrate Deployment Package
-        run: zip -r bot-server-co2.zip .
+        run: zip -r bot.zip .
       - name: Deploy to EB
         uses: einaregilsson/beanstalk-deploy@v21
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          application_name: "bot-server-co2"
-          environment_name: "Bot-server-co2-env"
+          application_name: "bot"
+          environment_name: "Bot"
           version_label: ${{ github.sha }}
           region: us-west-2
           deployment_package: bot-server-co2.zip
