@@ -18,16 +18,16 @@ jobs:
       - name: Install Dependencies
         run: npm install
       - name: Genrate Deployment Package
-        run: zip -r bot.zip .
+        run: zip -r bot-telegram.zip .
       - name: Deploy to EB
         uses: einaregilsson/beanstalk-deploy@v21
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          application_name: "bot"
-          environment_name: "Bot"
+          application_name: "bot-telegram"
+          environment_name: "Bot-telegram"
           version_label: ${{ github.sha }}
           region: us-west-2
-          deployment_package: bot-server-co2.zip
+          deployment_package: bot-telegram.zip
           use_existing_version_if_available: true
           wait_for_deployment: true
