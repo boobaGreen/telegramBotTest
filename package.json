@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc --downlevelIteration server.ts",
-    "start": "node serverBot.js"
+    "start": "node server.js"
   },
   "author": "Claudio Dall'Ara",
   "license": "MIT",
