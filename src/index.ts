@@ -21,7 +21,6 @@ const initializeGroupStats = (chatId: string) => {
   groupStats[chatId] = { totalMessages: 0, totalSizeKB: 0 };
 };
 
-
 bot.start((ctx: { reply: (arg0: string) => any }) =>
   ctx.reply("Benvenuto! Usa /help per visualizzare l'elenco dei comandi.")
 );
