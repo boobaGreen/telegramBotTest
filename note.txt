@@ -1,3 +1,9 @@
+name application co2-bot
+environment : Co2-bot-env
+co2-bot.us-west-2.elasticbeanstalk.com
+
+
+
 aws develo : https://www.youtube.com/watch?v=Ji8i_2vinBo
 
 tsc --downlevelIteration server.ts          ---------altrimenti da une errore
