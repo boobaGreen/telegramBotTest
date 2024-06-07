@@ -2,7 +2,8 @@ name: CICD
 
 on:
   push:
-    branches: -aws
+    branches:
+      - aws
 
 jobs:
   build-and-deploy:
@@ -27,6 +28,6 @@ jobs:
           environment_name: "Co2-bot-env"
           version_label: ${{ github.sha }}
           region: us-west-2
-          deployment_package: co2-bot.zip.zip
+          deployment_package: co2-bot.zip
           use_existing_version_if_available: true
           wait_for_deployment: true
