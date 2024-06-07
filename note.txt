@@ -24,8 +24,23 @@ tsc --downlevelIteration server.ts          ---------altrimenti da une errore
 rimettere 15 min come limite
 
 
-YESSSSSSSSSSSSSSSSSSSSSSSSSSSSS
-https://co2backend.onrender.com/api/v1/reports?groupId=-1002248332369
+
+
+tutti i report:
+https://co2backend.onrender.com/api/v1/reports 
+
+tutti i report di un gruppo:
+https://co2backend.onrender.com/api/v1/reports?groupId=-1002248332369 
+
+tutti i report piu vecchi o uguali di una data:
+https://co2backend.onrender.com/api/v1/reports?timestamp[lte]=2024-06-07T11:28:01.195Z
+
+tutti i report piu vecchi di una data:
+https://co2backend.onrender.com/api/v1/reports?timestamp[lt]=2024-06-07T11:28:01.195Z
+
+tutti i report piu pesanti di tot kb 
+https://co2backend.onrender.com/api/v1/reports?totalSizeKB[gt]=1600
+
 
 
 
