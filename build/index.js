@@ -33,7 +33,7 @@ bot.command("stats", (ctx) => {
     const chatId = (_b = (_a = ctx.message) === null || _a === void 0 ? void 0 : _a.chat) === null || _b === void 0 ? void 0 : _b.id;
     if (chatId && groupStats[chatId]) {
         const stats = groupStats[chatId];
-        ctx.reply(`Statistiche del gruppo:\nMessaggi totali: ${stats.totalMessages}\nDimensione totale: ${stats.totalSizeKB.toFixed(3)} KB`);
+        ctx.reply(`Statistiche del gruppo - ultimo frame non ancora report finito :\nMessaggi totali: ${stats.totalMessages}\nDimensione totale: ${stats.totalSizeKB.toFixed(3)} KB`);
     }
     else {
         ctx.reply("Non ci sono statistiche disponibili per questo gruppo.");
@@ -77,7 +77,7 @@ app.get("/", (_req, res) => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`Server is running on port ${PORT}`);
-    cron.schedule("* * * * *", () => {
+    cron.schedule("*/15 * * * *", () => {
         console.log("Esecuzione del job di invio report ogni minuto !");
         if (Object.keys(groupStats).length > 0) {
             sendReport();
