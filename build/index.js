@@ -150,7 +150,7 @@ const sendReport = () => __awaiter(void 0, void 0, void 0, function* () {
         }
         catch (error) {
             if (error.response && error.response.status === 403) {
-                console.error("Il bot non può inviare messaggi al gruppo. È stato rimosso?");
+                console.error("Il bot non può inviare messaggi al gruppo. È stato rimosso ?");
             }
             else {
                 console.error("Errore durante l'invio del report :", error);

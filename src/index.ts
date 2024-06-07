@@ -177,7 +177,7 @@ const sendReport = async () => {
     } catch (error) {
       if ((error as any).response && (error as any).response.status === 403) {
         console.error(
-          "Il bot non può inviare messaggi al gruppo. È stato rimosso?"
+          "Il bot non può inviare messaggi al gruppo. È stato rimosso ?"
         );
       } else {
         console.error("Errore durante l'invio del report :", error);
