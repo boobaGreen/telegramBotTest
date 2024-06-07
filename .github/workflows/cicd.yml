@@ -2,8 +2,7 @@ name: CICD
 
 on:
   push:
-    branches:
-      -
+    branches: -aws
 
 jobs:
   build-and-deploy:
