@@ -1,4 +1,5 @@
 const dotenv = require("dotenv");
+dotenv.config({ path: "./config.env" });
 const express = require("express");
 const app = express();
 const axios = require("axios");
@@ -12,8 +13,6 @@ const bot = new Telegraf(process.env.BOT_TOKEN);
 import { calculateMessageSizeKB } from "./utils/getKbSize";
 import { GroupStats, ReportPayload } from "./types/types";
 import { getParticipantsCount } from "./utils/getMemberCount";
-
-dotenv.config({ path: "./config.env" });
 
 let groupStats: Record<string, GroupStats> = {};
 
@@ -104,11 +103,12 @@ app.listen(PORT, async () => {
   });
 });
 
-let endPoint = "";
+let endPoint = "http://localhost:3005";
 if (process.env.ENVIRONMENT === "production") {
-  endPoint = process.env.REPORT_ENDPOINT || "http://localhost:3005";
+  endPoint = process.env.REPORT_ENDPOINT || "";
 }
-const finalEndPoint = endPoint + "api/v1/reports";
+console.log("Endpoint:", endPoint);
+const finalEndPoint = endPoint + "/api/v1/reports";
 const sendEmptyReport = async (chatId: string | undefined, chatInfo: any) => {
   if (!chatId) {
     console.error("Chat ID mancante.");
