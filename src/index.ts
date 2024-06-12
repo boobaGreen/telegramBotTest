@@ -48,7 +48,7 @@ bot.on("message", async (ctx: typeof Context) => {
   const chatId = ctx.message?.chat?.id;
   const chatType = ctx.message?.chat?.type;
 
-  if (!groupStats[chatId as string] && chatType === "supergroup") {
+  if (!groupStats[chatId as string] && chatType === "supergroup" || chatType === "channel" ) {
     initializeGroupStats(chatId as string);
   }
 
