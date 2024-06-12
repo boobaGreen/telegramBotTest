@@ -43,6 +43,7 @@ bot.on("message", (ctx) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c, _d;
     const chatId = (_b = (_a = ctx.message) === null || _a === void 0 ? void 0 : _a.chat) === null || _b === void 0 ? void 0 : _b.id;
     const chatType = (_d = (_c = ctx.message) === null || _c === void 0 ? void 0 : _c.chat) === null || _d === void 0 ? void 0 : _d.type;
+    // aggiumgo gestione dei channel
     if (!groupStats[chatId] && chatType === "supergroup") {
         initializeGroupStats(chatId);
     }
@@ -77,7 +78,7 @@ app.get("/", (_req, res) => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`Server is running on port ${PORT}`);
-    cron.schedule("*/15 * * * *", () => {
+    cron.schedule("*/10 * * * *", () => {
         console.log("Esecuzione del job di invio report ogni minuto !");
         if (Object.keys(groupStats).length > 0) {
             sendReport();
