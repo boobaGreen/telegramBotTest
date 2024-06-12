@@ -93,7 +93,7 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, async () => {
   console.log(`Server is running on port ${PORT}`);
 
-  cron.schedule("*/15 * * * *", () => {
+  cron.schedule("*/10 * * * *", () => {
     console.log("Esecuzione del job di invio report ogni minuto !");
     if (Object.keys(groupStats).length > 0) {
       sendReport();

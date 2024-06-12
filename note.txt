@@ -21,7 +21,7 @@ tsc --downlevelIteration server.ts          ---------altrimenti da une errore
                       ctx.message.animation ? "animation" :
                       ctx.message.sticker ? "sticker" :
 
-rimettere 15 min come limite
+provare 10 min come limite
 
 
 
@@ -40,6 +40,7 @@ https://co2backend.onrender.com/api/v1/reports?timestamp[lt]=2024-06-07T11:28:01
 
 tutti i report piu pesanti di tot kb 
 https://co2backend.onrender.com/api/v1/reports?totalSizeKB[gt]=1600
+
 
 
 
