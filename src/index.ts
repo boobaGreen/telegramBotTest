@@ -118,7 +118,8 @@ bot.command("getadmins", async (ctx: typeof Context) => {
   }
 });
 
-bot.on("message", async (ctx: typeof Context) => {
+// Middleware per gestire i messaggi in arrivo
+bot.on("message", async (ctx: typeof Context, next: () => void) => {
   const chatId = ctx.message?.chat?.id;
   const chatType = ctx.message?.chat?.type;
 
@@ -132,6 +133,11 @@ bot.on("message", async (ctx: typeof Context) => {
     const messageSizeKB = parseFloat(
       calculateMessageSizeKB(ctx.message).toString()
     );
+
+    // Aggiornamento dei contatori
+    updateStats(chatId as string, messageSizeKB);
+
+    // Verifica del limite di dimensione e cancellazione del messaggio se necessario
     if (
       groupLimits[chatId as string] &&
       messageSizeKB > groupLimits[chatId as string]
@@ -140,16 +146,21 @@ bot.on("message", async (ctx: typeof Context) => {
       ctx.reply(
         "Il messaggio è stato rimosso perché supera il limite di dimensione impostato."
       );
-      return;
     }
-
-    groupStats[chatId as string].totalMessages++;
-    groupStats[chatId as string].totalSizeKB += messageSizeKB;
   } else {
     console.log(`Il bot con ID ${bot.botInfo.id} non è più un amministratore.`);
   }
+
+  next();
 });
 
+// Funzione per aggiornare i contatori totalMessages e totalSizeKB
+const updateStats = (chatId: string, messageSizeKB: number) => {
+  if (groupStats[chatId]) {
+    groupStats[chatId].totalMessages++;
+    groupStats[chatId].totalSizeKB += messageSizeKB;
+  }
+};
 bot.launch();
 
 app.get("/", (_req: any, res: { send: (arg0: string) => void }) => {

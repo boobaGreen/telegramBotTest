@@ -98,7 +98,8 @@ bot.command("getadmins", (ctx) => __awaiter(void 0, void 0, void 0, function* ()
         ctx.reply("Si è verificato un errore durante il recupero degli amministratori.");
     }
 }));
-bot.on("message", (ctx) => __awaiter(void 0, void 0, void 0, function* () {
+// Middleware per gestire i messaggi in arrivo
+bot.on("message", (ctx, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _k, _l, _m, _o;
     const chatId = (_l = (_k = ctx.message) === null || _k === void 0 ? void 0 : _k.chat) === null || _l === void 0 ? void 0 : _l.id;
     const chatType = (_o = (_m = ctx.message) === null || _m === void 0 ? void 0 : _m.chat) === null || _o === void 0 ? void 0 : _o.type;
@@ -108,19 +109,27 @@ bot.on("message", (ctx) => __awaiter(void 0, void 0, void 0, function* () {
     const isAdmin = yield isBotAdmin(ctx);
     if (isAdmin && groupStats[chatId]) {
         const messageSizeKB = parseFloat((0, getKbSize_1.calculateMessageSizeKB)(ctx.message).toString());
+        // Aggiornamento dei contatori
+        updateStats(chatId, messageSizeKB);
+        // Verifica del limite di dimensione e cancellazione del messaggio se necessario
         if (groupLimits[chatId] &&
             messageSizeKB > groupLimits[chatId]) {
             ctx.deleteMessage();
             ctx.reply("Il messaggio è stato rimosso perché supera il limite di dimensione impostato.");
-            return;
         }
-        groupStats[chatId].totalMessages++;
-        groupStats[chatId].totalSizeKB += messageSizeKB;
     }
     else {
         console.log(`Il bot con ID ${bot.botInfo.id} non è più un amministratore.`);
     }
+    next();
 }));
+// Funzione per aggiornare i contatori totalMessages e totalSizeKB
+const updateStats = (chatId, messageSizeKB) => {
+    if (groupStats[chatId]) {
+        groupStats[chatId].totalMessages++;
+        groupStats[chatId].totalSizeKB += messageSizeKB;
+    }
+};
 bot.launch();
 app.get("/", (_req, res) => {
     res.send("Server is running and bot is active add-limit-3.");
