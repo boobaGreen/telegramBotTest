@@ -23,17 +23,63 @@ const bot = new Telegraf(process.env.BOT_TOKEN);
 const getKbSize_1 = require("./utils/getKbSize");
 const getMemberCount_1 = require("./utils/getMemberCount");
 let groupStats = {};
+let groupLimits = {};
 const initializeGroupStats = (chatId) => {
     groupStats[chatId] = { totalMessages: 0, totalSizeKB: 0 };
 };
 bot.start((ctx) => ctx.reply("Benvenuto! Usa /help per visualizzare l'elenco dei comandi."));
 bot.help((ctx) => ctx.reply("Elenco dei comandi disponibili:\n/help - Mostra l'elenco dei comandi disponibili\n/stats - Visualizza le statistiche del gruppo"));
+// Function to check if the bot is still an administrator
+const isBotAdmin = (ctx) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b;
+    try {
+        const administrators = yield ctx.telegram.getChatAdministrators((_b = (_a = ctx.message) === null || _a === void 0 ? void 0 : _a.chat) === null || _b === void 0 ? void 0 : _b.id);
+        const botId = ctx.botInfo.id;
+        return administrators.some((admin) => admin.user.id === botId);
+    }
+    catch (error) {
+        console.error("Errore durante il recupero degli amministratori:", error);
+        return false;
+    }
+});
+const isUserAdmin = (ctx, userId) => __awaiter(void 0, void 0, void 0, function* () {
+    var _c, _d;
+    try {
+        const administrators = yield ctx.telegram.getChatAdministrators((_d = (_c = ctx.message) === null || _c === void 0 ? void 0 : _c.chat) === null || _d === void 0 ? void 0 : _d.id);
+        return administrators.some((admin) => admin.user.id === userId);
+    }
+    catch (error) {
+        console.error("Errore durante il recupero degli amministratori:", error);
+        return false;
+    }
+});
+bot.command("set_limit", (ctx) => __awaiter(void 0, void 0, void 0, function* () {
+    var _e, _f, _g, _h, _j;
+    const chatId = (_f = (_e = ctx.message) === null || _e === void 0 ? void 0 : _e.chat) === null || _f === void 0 ? void 0 : _f.id;
+    const userId = (_h = (_g = ctx.message) === null || _g === void 0 ? void 0 : _g.from) === null || _h === void 0 ? void 0 : _h.id;
+    if (chatId && userId) {
+        const isAdmin = yield isUserAdmin(ctx, userId);
+        if (isAdmin) {
+            const limit = parseFloat((_j = ctx.message) === null || _j === void 0 ? void 0 : _j.text.split(" ")[1]);
+            if (!isNaN(limit) && limit > 0) {
+                groupLimits[chatId] = limit;
+                ctx.reply(`Limite di dimensione del messaggio impostato a ${limit} KB.`);
+            }
+            else {
+                ctx.reply("Per favore, fornisci un limite di dimensione valido (numero positivo).");
+            }
+        }
+        else {
+            ctx.reply("Solo gli amministratori possono impostare il limite di dimensione del messaggio.");
+        }
+    }
+}));
 bot.command("stats", (ctx) => {
     var _a, _b;
     const chatId = (_b = (_a = ctx.message) === null || _a === void 0 ? void 0 : _a.chat) === null || _b === void 0 ? void 0 : _b.id;
     if (chatId && groupStats[chatId]) {
         const stats = groupStats[chatId];
-        ctx.reply(`Statistiche del gruppo - ultimo frame non ancora report finito :\nMessaggi totali: ${stats.totalMessages}\nDimensione totale: ${stats.totalSizeKB.toFixed(3)} KB`);
+        ctx.reply(`Statistiche del gruppo - ultimo frame  :\nMessaggi totali: ${stats.totalMessages}\nDimensione totale: ${stats.totalSizeKB.toFixed(3)} KB`);
     }
     else {
         ctx.reply("Non ci sono statistiche disponibili per questo gruppo.");
@@ -53,40 +99,31 @@ bot.command("getadmins", (ctx) => __awaiter(void 0, void 0, void 0, function* ()
     }
 }));
 bot.on("message", (ctx) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d;
-    const chatId = (_b = (_a = ctx.message) === null || _a === void 0 ? void 0 : _a.chat) === null || _b === void 0 ? void 0 : _b.id;
-    const chatType = (_d = (_c = ctx.message) === null || _c === void 0 ? void 0 : _c.chat) === null || _d === void 0 ? void 0 : _d.type;
-    // aggiumgo gestione dei channel
+    var _k, _l, _m, _o;
+    const chatId = (_l = (_k = ctx.message) === null || _k === void 0 ? void 0 : _k.chat) === null || _l === void 0 ? void 0 : _l.id;
+    const chatType = (_o = (_m = ctx.message) === null || _m === void 0 ? void 0 : _m.chat) === null || _o === void 0 ? void 0 : _o.type;
     if (!groupStats[chatId] && chatType === "supergroup") {
         initializeGroupStats(chatId);
     }
-    // Check if the bot is still an administrator
     const isAdmin = yield isBotAdmin(ctx);
     if (isAdmin && groupStats[chatId]) {
-        groupStats[chatId].totalMessages++;
         const messageSizeKB = parseFloat((0, getKbSize_1.calculateMessageSizeKB)(ctx.message).toString());
+        if (groupLimits[chatId] &&
+            messageSizeKB > groupLimits[chatId]) {
+            ctx.deleteMessage();
+            ctx.reply("Il messaggio è stato rimosso perché supera il limite di dimensione impostato.");
+            return;
+        }
+        groupStats[chatId].totalMessages++;
         groupStats[chatId].totalSizeKB += messageSizeKB;
     }
     else {
         console.log(`Il bot con ID ${bot.botInfo.id} non è più un amministratore.`);
     }
 }));
-// Function to check if the bot is still an administrator
-const isBotAdmin = (ctx) => __awaiter(void 0, void 0, void 0, function* () {
-    var _e, _f;
-    try {
-        const administrators = yield ctx.telegram.getChatAdministrators((_f = (_e = ctx.message) === null || _e === void 0 ? void 0 : _e.chat) === null || _f === void 0 ? void 0 : _f.id);
-        const botId = ctx.botInfo.id;
-        return administrators.some((admin) => admin.user.id === botId);
-    }
-    catch (error) {
-        console.error("Errore durante il recupero degli amministratori:", error);
-        return false;
-    }
-});
 bot.launch();
 app.get("/", (_req, res) => {
-    res.send("Server is running and bot is active add-limit-2.");
+    res.send("Server is running and bot is active add-limit-3.");
 });
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => __awaiter(void 0, void 0, void 0, function* () {

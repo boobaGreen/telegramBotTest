@@ -93,7 +93,7 @@ bot.command("stats", (ctx: typeof Context) => {
   if (chatId && groupStats[chatId]) {
     const stats = groupStats[chatId];
     ctx.reply(
-      `Statistiche del gruppo - ultimo frame non ancora report finito :\nMessaggi totali: ${
+      `Statistiche del gruppo - ultimo frame  :\nMessaggi totali: ${
         stats.totalMessages
       }\nDimensione totale: ${stats.totalSizeKB.toFixed(3)} KB`
     );
@@ -153,7 +153,7 @@ bot.on("message", async (ctx: typeof Context) => {
 bot.launch();
 
 app.get("/", (_req: any, res: { send: (arg0: string) => void }) => {
-  res.send("Server is running and bot is active add-limit-2.");
+  res.send("Server is running and bot is active add-limit-3.");
 });
 
 const PORT = process.env.PORT || 3000;
