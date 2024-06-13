@@ -101,7 +101,7 @@ const isBotAdmin = async (ctx: typeof Context): Promise<boolean> => {
 bot.launch();
 
 app.get("/", (_req: any, res: { send: (arg0: string) => void }) => {
-  res.send("Server is running and bot is active.");
+  res.send("Server is running and bot is active add-limit-2.");
 });
 
 const PORT = process.env.PORT || 3000;

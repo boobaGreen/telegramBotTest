@@ -86,7 +86,7 @@ const isBotAdmin = (ctx) => __awaiter(void 0, void 0, void 0, function* () {
 });
 bot.launch();
 app.get("/", (_req, res) => {
-    res.send("Server is running and bot is active.");
+    res.send("Server is running and bot is active add-limit-2.");
 });
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => __awaiter(void 0, void 0, void 0, function* () {
