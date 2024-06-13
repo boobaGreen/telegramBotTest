@@ -59,6 +59,20 @@ bot.command("getadmins", async (ctx: typeof Context) => {
     );
   }
 });
+const isUserAdmin = async (
+  ctx: typeof Context,
+  userId: number
+): Promise<boolean> => {
+  try {
+    const administrators = await ctx.telegram.getChatAdministrators(
+      ctx.message?.chat?.id
+    );
+    return administrators.some((admin) => admin.user.id === userId);
+  } catch (error) {
+    console.error("Errore durante il recupero degli amministratori:", error);
+    return false;
+  }
+};
 bot.on("message", async (ctx: typeof Context) => {
   const chatId = ctx.message?.chat?.id;
   const chatType = ctx.message?.chat?.type;
