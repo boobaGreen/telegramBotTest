@@ -39,6 +39,19 @@ bot.command("stats", (ctx) => {
         ctx.reply("Non ci sono statistiche disponibili per questo gruppo.");
     }
 });
+bot.command("getadmins", (ctx) => __awaiter(void 0, void 0, void 0, function* () {
+    const chatId = ctx.message.chat.id;
+    try {
+        const admins = yield ctx.telegram.getChatAdministrators(chatId);
+        ctx.reply(`Gli amministratori del gruppo sono: ${admins
+            .map((admin) => admin.user.username)
+            .join(", ")}`);
+    }
+    catch (error) {
+        console.error("Errore durante il recupero degli amministratori:", error);
+        ctx.reply("Si è verificato un errore durante il recupero degli amministratori.");
+    }
+}));
 bot.on("message", (ctx) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c, _d;
     const chatId = (_b = (_a = ctx.message) === null || _a === void 0 ? void 0 : _a.chat) === null || _b === void 0 ? void 0 : _b.id;
@@ -79,7 +92,7 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`Server is running on port ${PORT}`);
     cron.schedule("*/10 * * * *", () => {
-        console.log("Esecuzione del job di invio report ogni minuto !");
+        console.log("Esecuzione del job di invio report ogni 10 minuti !");
         if (Object.keys(groupStats).length > 0) {
             sendReport();
             groupStats = {}; // Clear the object after sending report

@@ -43,7 +43,22 @@ bot.command("stats", (ctx: typeof Context) => {
     ctx.reply("Non ci sono statistiche disponibili per questo gruppo.");
   }
 });
-
+bot.command("getadmins", async (ctx: typeof Context) => {
+  const chatId = ctx.message.chat.id;
+  try {
+    const admins = await ctx.telegram.getChatAdministrators(chatId);
+    ctx.reply(
+      `Gli amministratori del gruppo sono: ${admins
+        .map((admin: { user: { username: any } }) => admin.user.username)
+        .join(", ")}`
+    );
+  } catch (error) {
+    console.error("Errore durante il recupero degli amministratori:", error);
+    ctx.reply(
+      "Si è verificato un errore durante il recupero degli amministratori."
+    );
+  }
+});
 bot.on("message", async (ctx: typeof Context) => {
   const chatId = ctx.message?.chat?.id;
   const chatType = ctx.message?.chat?.type;
@@ -94,7 +109,7 @@ app.listen(PORT, async () => {
   console.log(`Server is running on port ${PORT}`);
 
   cron.schedule("*/10 * * * *", () => {
-    console.log("Esecuzione del job di invio report ogni minuto !");
+    console.log("Esecuzione del job di invio report ogni 10 minuti !");
     if (Object.keys(groupStats).length > 0) {
       sendReport();
       groupStats = {}; // Clear the object after sending report
