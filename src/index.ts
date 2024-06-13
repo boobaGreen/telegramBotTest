@@ -16,6 +16,8 @@ import { getParticipantsCount } from "./utils/getMemberCount";
 
 let groupStats: Record<string, GroupStats> = {};
 
+let groupLimits: Record<string, number> = {};
+
 const initializeGroupStats = (chatId: string) => {
   groupStats[chatId] = { totalMessages: 0, totalSizeKB: 0 };
 };
@@ -29,6 +31,62 @@ bot.help((ctx: { reply: (arg0: string) => any }) =>
     "Elenco dei comandi disponibili:\n/help - Mostra l'elenco dei comandi disponibili\n/stats - Visualizza le statistiche del gruppo"
   )
 );
+// Function to check if the bot is still an administrator
+const isBotAdmin = async (ctx: typeof Context): Promise<boolean> => {
+  try {
+    const administrators = await ctx.telegram.getChatAdministrators(
+      ctx.message?.chat?.id
+    );
+    const botId = ctx.botInfo.id;
+    return administrators.some(
+      (admin: { user: { id: any } }) => admin.user.id === botId
+    );
+  } catch (error) {
+    console.error("Errore durante il recupero degli amministratori:", error);
+    return false;
+  }
+};
+const isUserAdmin = async (
+  ctx: typeof Context,
+  userId: number
+): Promise<boolean> => {
+  try {
+    const administrators = await ctx.telegram.getChatAdministrators(
+      ctx.message?.chat?.id
+    );
+    return administrators.some(
+      (admin: { user: { id: number } }) => admin.user.id === userId
+    );
+  } catch (error) {
+    console.error("Errore durante il recupero degli amministratori:", error);
+    return false;
+  }
+};
+bot.command("set_limit", async (ctx: typeof Context) => {
+  const chatId = ctx.message?.chat?.id;
+  const userId = ctx.message?.from?.id;
+
+  if (chatId && userId) {
+    const isAdmin = await isUserAdmin(ctx, userId);
+    if (isAdmin) {
+      const limit = parseFloat(ctx.message?.text.split(" ")[1]);
+      if (!isNaN(limit) && limit > 0) {
+        groupLimits[chatId] = limit;
+        ctx.reply(
+          `Limite di dimensione del messaggio impostato a ${limit} KB.`
+        );
+      } else {
+        ctx.reply(
+          "Per favore, fornisci un limite di dimensione valido (numero positivo)."
+        );
+      }
+    } else {
+      ctx.reply(
+        "Solo gli amministratori possono impostare il limite di dimensione del messaggio."
+      );
+    }
+  }
+});
 
 bot.command("stats", (ctx: typeof Context) => {
   const chatId = ctx.message?.chat?.id;
@@ -59,58 +117,38 @@ bot.command("getadmins", async (ctx: typeof Context) => {
     );
   }
 });
-const isUserAdmin = async (
-  ctx: typeof Context,
-  userId: number
-): Promise<boolean> => {
-  try {
-    const administrators = await ctx.telegram.getChatAdministrators(
-      ctx.message?.chat?.id
-    );
-    return administrators.some((admin) => admin.user.id === userId);
-  } catch (error) {
-    console.error("Errore durante il recupero degli amministratori:", error);
-    return false;
-  }
-};
+
 bot.on("message", async (ctx: typeof Context) => {
   const chatId = ctx.message?.chat?.id;
   const chatType = ctx.message?.chat?.type;
 
-  // aggiumgo gestione dei channel
   if (!groupStats[chatId as string] && chatType === "supergroup") {
     initializeGroupStats(chatId as string);
   }
 
-  // Check if the bot is still an administrator
   const isAdmin = await isBotAdmin(ctx);
 
   if (isAdmin && groupStats[chatId as string]) {
-    groupStats[chatId as string].totalMessages++;
     const messageSizeKB = parseFloat(
       calculateMessageSizeKB(ctx.message).toString()
     );
+    if (
+      groupLimits[chatId as string] &&
+      messageSizeKB > groupLimits[chatId as string]
+    ) {
+      ctx.deleteMessage();
+      ctx.reply(
+        "Il messaggio è stato rimosso perché supera il limite di dimensione impostato."
+      );
+      return;
+    }
+
+    groupStats[chatId as string].totalMessages++;
     groupStats[chatId as string].totalSizeKB += messageSizeKB;
   } else {
     console.log(`Il bot con ID ${bot.botInfo.id} non è più un amministratore.`);
   }
 });
-
-// Function to check if the bot is still an administrator
-const isBotAdmin = async (ctx: typeof Context): Promise<boolean> => {
-  try {
-    const administrators = await ctx.telegram.getChatAdministrators(
-      ctx.message?.chat?.id
-    );
-    const botId = ctx.botInfo.id;
-    return administrators.some(
-      (admin: { user: { id: any } }) => admin.user.id === botId
-    );
-  } catch (error) {
-    console.error("Errore durante il recupero degli amministratori:", error);
-    return false;
-  }
-};
 
 bot.launch();
 
