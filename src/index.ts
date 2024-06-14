@@ -62,6 +62,20 @@ const isUserAdmin = async (
     return false;
   }
 };
+
+bot.command("stats", (ctx: typeof Context) => {
+  const chatId = ctx.message?.chat?.id;
+  if (chatId && groupStats[chatId]) {
+    const stats = groupStats[chatId];
+    ctx.reply(
+      `Statistiche del gruppo - ultimo frame  :\nMessaggi totali: ${
+        stats.totalMessages
+      }\nDimensione totale: ${stats.totalSizeKB.toFixed(3)} KB`
+    );
+  } else {
+    ctx.reply("Non ci sono statistiche disponibili per questo gruppo.");
+  }
+});
 bot.command("set_limit", async (ctx: typeof Context) => {
   const chatId = ctx.message?.chat?.id;
   const userId = ctx.message?.from?.id;
@@ -85,20 +99,6 @@ bot.command("set_limit", async (ctx: typeof Context) => {
         "Solo gli amministratori possono impostare il limite di dimensione del messaggio."
       );
     }
-  }
-});
-
-bot.command("stats", (ctx: typeof Context) => {
-  const chatId = ctx.message?.chat?.id;
-  if (chatId && groupStats[chatId]) {
-    const stats = groupStats[chatId];
-    ctx.reply(
-      `Statistiche del gruppo - ultimo frame  :\nMessaggi totali: ${
-        stats.totalMessages
-      }\nDimensione totale: ${stats.totalSizeKB.toFixed(3)} KB`
-    );
-  } else {
-    ctx.reply("Non ci sono statistiche disponibili per questo gruppo.");
   }
 });
 bot.command("get_admins", async (ctx: typeof Context) => {
@@ -199,7 +199,9 @@ const updateStats = (chatId: string, messageSizeKB: number) => {
 bot.launch();
 
 app.get("/", (_req: any, res: { send: (arg0: string) => void }) => {
-  res.send("Server is running and bot is active add-limit-all-aws-2.");
+  res.send(
+    "Server is running and bot is active add-limit-all-aws-get and remove limit."
+  );
 });
 
 const PORT = process.env.PORT || 3000;

@@ -53,6 +53,17 @@ const isUserAdmin = (ctx, userId) => __awaiter(void 0, void 0, void 0, function*
         return false;
     }
 });
+bot.command("stats", (ctx) => {
+    var _a, _b;
+    const chatId = (_b = (_a = ctx.message) === null || _a === void 0 ? void 0 : _a.chat) === null || _b === void 0 ? void 0 : _b.id;
+    if (chatId && groupStats[chatId]) {
+        const stats = groupStats[chatId];
+        ctx.reply(`Statistiche del gruppo - ultimo frame  :\nMessaggi totali: ${stats.totalMessages}\nDimensione totale: ${stats.totalSizeKB.toFixed(3)} KB`);
+    }
+    else {
+        ctx.reply("Non ci sono statistiche disponibili per questo gruppo.");
+    }
+});
 bot.command("set_limit", (ctx) => __awaiter(void 0, void 0, void 0, function* () {
     var _e, _f, _g, _h, _j;
     const chatId = (_f = (_e = ctx.message) === null || _e === void 0 ? void 0 : _e.chat) === null || _f === void 0 ? void 0 : _f.id;
@@ -74,17 +85,6 @@ bot.command("set_limit", (ctx) => __awaiter(void 0, void 0, void 0, function* ()
         }
     }
 }));
-bot.command("stats", (ctx) => {
-    var _a, _b;
-    const chatId = (_b = (_a = ctx.message) === null || _a === void 0 ? void 0 : _a.chat) === null || _b === void 0 ? void 0 : _b.id;
-    if (chatId && groupStats[chatId]) {
-        const stats = groupStats[chatId];
-        ctx.reply(`Statistiche del gruppo - ultimo frame  :\nMessaggi totali: ${stats.totalMessages}\nDimensione totale: ${stats.totalSizeKB.toFixed(3)} KB`);
-    }
-    else {
-        ctx.reply("Non ci sono statistiche disponibili per questo gruppo.");
-    }
-});
 bot.command("get_admins", (ctx) => __awaiter(void 0, void 0, void 0, function* () {
     const chatId = ctx.message.chat.id;
     try {
@@ -98,11 +98,41 @@ bot.command("get_admins", (ctx) => __awaiter(void 0, void 0, void 0, function* (
         ctx.reply("Si è verificato un errore durante il recupero degli amministratori.");
     }
 }));
-// Middleware per gestire i messaggi in arrivo
-bot.on("message", (ctx, next) => __awaiter(void 0, void 0, void 0, function* () {
+bot.command("get_limit", (ctx) => {
+    var _a, _b;
+    const chatId = (_b = (_a = ctx.message) === null || _a === void 0 ? void 0 : _a.chat) === null || _b === void 0 ? void 0 : _b.id;
+    if (chatId && groupLimits[chatId] !== undefined) {
+        ctx.reply(`Il limite di dimensione del messaggio è ${groupLimits[chatId]} KB.`);
+    }
+    else {
+        ctx.reply("Non è stato impostato nessun limite di dimensione per questo gruppo.");
+    }
+});
+bot.command("remove_limit", (ctx) => __awaiter(void 0, void 0, void 0, function* () {
     var _k, _l, _m, _o;
     const chatId = (_l = (_k = ctx.message) === null || _k === void 0 ? void 0 : _k.chat) === null || _l === void 0 ? void 0 : _l.id;
-    const chatType = (_o = (_m = ctx.message) === null || _m === void 0 ? void 0 : _m.chat) === null || _o === void 0 ? void 0 : _o.type;
+    const userId = (_o = (_m = ctx.message) === null || _m === void 0 ? void 0 : _m.from) === null || _o === void 0 ? void 0 : _o.id;
+    if (chatId && userId) {
+        const isAdmin = yield isUserAdmin(ctx, userId);
+        if (isAdmin) {
+            if (groupLimits[chatId] !== undefined) {
+                delete groupLimits[chatId];
+                ctx.reply("Il limite di dimensione del messaggio è stato rimosso.");
+            }
+            else {
+                ctx.reply("Non è stato impostato nessun limite di dimensione per questo gruppo.");
+            }
+        }
+        else {
+            ctx.reply("Solo gli amministratori possono rimuovere il limite di dimensione del messaggio.");
+        }
+    }
+}));
+// Middleware per gestire i messaggi in arrivo
+bot.on("message", (ctx, next) => __awaiter(void 0, void 0, void 0, function* () {
+    var _p, _q, _r, _s;
+    const chatId = (_q = (_p = ctx.message) === null || _p === void 0 ? void 0 : _p.chat) === null || _q === void 0 ? void 0 : _q.id;
+    const chatType = (_s = (_r = ctx.message) === null || _r === void 0 ? void 0 : _r.chat) === null || _s === void 0 ? void 0 : _s.type;
     if (!groupStats[chatId] && chatType === "supergroup") {
         initializeGroupStats(chatId);
     }
@@ -132,7 +162,7 @@ const updateStats = (chatId, messageSizeKB) => {
 };
 bot.launch();
 app.get("/", (_req, res) => {
-    res.send("Server is running and bot is active add-limit-all-aws-2.");
+    res.send("Server is running and bot is active add-limit-all-aws-get and remove limit.");
 });
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => __awaiter(void 0, void 0, void 0, function* () {
