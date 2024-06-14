@@ -31,6 +31,7 @@ bot.help((ctx: { reply: (arg0: string) => any }) =>
     "Elenco dei comandi disponibili:\n/help - Mostra l'elenco dei comandi disponibili\n/stats - Visualizza le statistiche del gruppo"
   )
 );
+
 // Function to check if the bot is still an administrator
 const isBotAdmin = async (ctx: typeof Context): Promise<boolean> => {
   try {
@@ -46,6 +47,7 @@ const isBotAdmin = async (ctx: typeof Context): Promise<boolean> => {
     return false;
   }
 };
+
 const isUserAdmin = async (
   ctx: typeof Context,
   userId: number
@@ -76,6 +78,7 @@ bot.command("stats", (ctx: typeof Context) => {
     ctx.reply("Non ci sono statistiche disponibili per questo gruppo.");
   }
 });
+
 bot.command("set_limit", async (ctx: typeof Context) => {
   const chatId = ctx.message?.chat?.id;
   const userId = ctx.message?.from?.id;
@@ -101,6 +104,7 @@ bot.command("set_limit", async (ctx: typeof Context) => {
     }
   }
 });
+
 bot.command("get_admins", async (ctx: typeof Context) => {
   const chatId = ctx.message.chat.id;
   try {
@@ -130,6 +134,7 @@ bot.command("get_limit", (ctx: typeof Context) => {
     );
   }
 });
+
 bot.command("remove_limit", async (ctx: typeof Context) => {
   const chatId = ctx.message?.chat?.id;
   const userId = ctx.message?.from?.id;
@@ -196,6 +201,7 @@ const updateStats = (chatId: string, messageSizeKB: number) => {
     groupStats[chatId].totalSizeKB += messageSizeKB;
   }
 };
+
 bot.launch();
 
 app.get("/", (_req: any, res: { send: (arg0: string) => void }) => {
@@ -209,7 +215,7 @@ app.listen(PORT, async () => {
   console.log(`Server is running on port ${PORT}`);
 
   cron.schedule("*/10 * * * *", () => {
-    console.log("Esecuzione del job di invio report ogni 10 minuti !");
+    console.log("Esecuzione del job di invio report ogni 10 minuti!");
     if (Object.keys(groupStats).length > 0) {
       sendReport();
       groupStats = {}; // Clear the object after sending report
@@ -225,6 +231,7 @@ if (process.env.ENVIRONMENT === "production") {
 }
 console.log("Endpoint:", endPoint);
 const finalEndPoint = endPoint + "/api/v1/reports";
+
 const sendEmptyReport = async (chatId: string | undefined, chatInfo: any) => {
   if (!chatId) {
     console.error("Chat ID mancante.");
@@ -240,6 +247,7 @@ const sendEmptyReport = async (chatId: string | undefined, chatInfo: any) => {
       emissionsSWDMethod: 0,
       groupName: chatInfo.title,
       participantsCount: chatInfo.membersCount,
+      adminNames: [], // Campi adminNames vuoti nel report vuoto
     };
 
     const response = await axios.post(
@@ -251,6 +259,18 @@ const sendEmptyReport = async (chatId: string | undefined, chatInfo: any) => {
   }
 };
 
+const getAdminNames = async (chatId: string) => {
+  try {
+    const admins = await bot.telegram.getChatAdministrators(chatId);
+    return admins.map(
+      (admin: { user: { username: any } }) => admin.user.username
+    );
+  } catch (error) {
+    console.error("Errore durante il recupero degli amministratori:", error);
+    return [];
+  }
+};
+
 const sendReport = async () => {
   for (const [chatId, stats] of Object.entries(groupStats)) {
     const totalSizeBytes = stats.totalSizeKB * 1024;
@@ -259,6 +279,9 @@ const sendReport = async () => {
 
     // Ottieni il numero di partecipanti del gruppo
     const participantsCount = await getParticipantsCount(chatId);
+
+    // Ottieni i nomi degli amministratori del gruppo
+    const adminNames = await getAdminNames(chatId);
 
     // Verifica se ci sono stati messaggi nel lasso di tempo del report
     let totalMessages = stats.totalMessages || 0;
@@ -281,6 +304,7 @@ const sendReport = async () => {
         emissionsSWDMethod: emissionsSWD,
         groupName: chatInfo.title,
         participantsCount, // Aggiungi il numero di partecipanti al payload
+        adminNames, // Aggiungi i nomi degli amministratori al payload
       };
 
       const response = await axios.post(
@@ -293,10 +317,10 @@ const sendReport = async () => {
     } catch (error) {
       if ((error as any).response && (error as any).response.status === 403) {
         console.error(
-          "Il bot non può inviare messaggi al gruppo. È stato rimosso ?"
+          "Il bot non può inviare messaggi al gruppo. È stato rimosso?"
         );
       } else {
-        console.error("Errore durante l'invio del report :", error);
+        console.error("Errore durante l'invio del report:", error);
       }
     }
   }

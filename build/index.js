@@ -168,7 +168,7 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`Server is running on port ${PORT}`);
     cron.schedule("*/10 * * * *", () => {
-        console.log("Esecuzione del job di invio report ogni 10 minuti !");
+        console.log("Esecuzione del job di invio report ogni 10 minuti!");
         if (Object.keys(groupStats).length > 0) {
             sendReport();
             groupStats = {}; // Clear the object after sending report
@@ -198,12 +198,23 @@ const sendEmptyReport = (chatId, chatInfo) => __awaiter(void 0, void 0, void 0, 
             emissionsSWDMethod: 0,
             groupName: chatInfo.title,
             participantsCount: chatInfo.membersCount,
+            adminNames: [], // Campi adminNames vuoti nel report vuoto
         };
         const response = yield axios.post(finalEndPoint, payload // Specifica il tipo di payload come ReportPayload
         );
     }
     catch (error) {
         console.log("Errore durante l'invio del report vuoto:", error);
+    }
+});
+const getAdminNames = (chatId) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const admins = yield bot.telegram.getChatAdministrators(chatId);
+        return admins.map((admin) => admin.user.username);
+    }
+    catch (error) {
+        console.error("Errore durante il recupero degli amministratori:", error);
+        return [];
     }
 });
 const sendReport = () => __awaiter(void 0, void 0, void 0, function* () {
@@ -213,6 +224,8 @@ const sendReport = () => __awaiter(void 0, void 0, void 0, function* () {
         const emissionsSWDMethod = swd.perByte(totalSizeBytes).toFixed(7);
         // Ottieni il numero di partecipanti del gruppo
         const participantsCount = yield (0, getMemberCount_1.getParticipantsCount)(chatId);
+        // Ottieni i nomi degli amministratori del gruppo
+        const adminNames = yield getAdminNames(chatId);
         // Verifica se ci sono stati messaggi nel lasso di tempo del report
         let totalMessages = stats.totalMessages || 0;
         let totalSizeKB = stats.totalSizeKB || 0;
@@ -232,6 +245,7 @@ const sendReport = () => __awaiter(void 0, void 0, void 0, function* () {
                 emissionsSWDMethod: emissionsSWD,
                 groupName: chatInfo.title,
                 participantsCount, // Aggiungi il numero di partecipanti al payload
+                adminNames, // Aggiungi i nomi degli amministratori al payload
             };
             const response = yield axios.post(finalEndPoint, payload // Specifica il tipo di payload come ReportPayload
             );
@@ -240,10 +254,10 @@ const sendReport = () => __awaiter(void 0, void 0, void 0, function* () {
         }
         catch (error) {
             if (error.response && error.response.status === 403) {
-                console.error("Il bot non può inviare messaggi al gruppo. È stato rimosso ?");
+                console.error("Il bot non può inviare messaggi al gruppo. È stato rimosso?");
             }
             else {
-                console.error("Errore durante l'invio del report :", error);
+                console.error("Errore durante l'invio del report:", error);
             }
         }
     }
