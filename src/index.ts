@@ -164,7 +164,7 @@ const updateStats = (chatId: string, messageSizeKB: number) => {
 bot.launch();
 
 app.get("/", (_req: any, res: { send: (arg0: string) => void }) => {
-  res.send("Server is running and bot is active add-limit-all-aws.");
+  res.send("Server is running and bot is active add-limit-all-aws-2.");
 });
 
 const PORT = process.env.PORT || 3000;
