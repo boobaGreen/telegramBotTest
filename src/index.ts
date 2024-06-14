@@ -101,7 +101,7 @@ bot.command("stats", (ctx: typeof Context) => {
     ctx.reply("Non ci sono statistiche disponibili per questo gruppo.");
   }
 });
-bot.command("getadmins", async (ctx: typeof Context) => {
+bot.command("get_admins", async (ctx: typeof Context) => {
   const chatId = ctx.message.chat.id;
   try {
     const admins = await ctx.telegram.getChatAdministrators(chatId);
@@ -164,7 +164,7 @@ const updateStats = (chatId: string, messageSizeKB: number) => {
 bot.launch();
 
 app.get("/", (_req: any, res: { send: (arg0: string) => void }) => {
-  res.send("Server is running and bot is active add-limit-4.");
+  res.send("Server is running and bot is active add-limit-all-aws.");
 });
 
 const PORT = process.env.PORT || 3000;
