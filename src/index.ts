@@ -118,6 +118,41 @@ bot.command("get_admins", async (ctx: typeof Context) => {
   }
 });
 
+bot.command("get_limit", (ctx: typeof Context) => {
+  const chatId = ctx.message?.chat?.id;
+  if (chatId && groupLimits[chatId] !== undefined) {
+    ctx.reply(
+      `Il limite di dimensione del messaggio è ${groupLimits[chatId]} KB.`
+    );
+  } else {
+    ctx.reply(
+      "Non è stato impostato nessun limite di dimensione per questo gruppo."
+    );
+  }
+});
+bot.command("remove_limit", async (ctx: typeof Context) => {
+  const chatId = ctx.message?.chat?.id;
+  const userId = ctx.message?.from?.id;
+
+  if (chatId && userId) {
+    const isAdmin = await isUserAdmin(ctx, userId);
+    if (isAdmin) {
+      if (groupLimits[chatId] !== undefined) {
+        delete groupLimits[chatId];
+        ctx.reply("Il limite di dimensione del messaggio è stato rimosso.");
+      } else {
+        ctx.reply(
+          "Non è stato impostato nessun limite di dimensione per questo gruppo."
+        );
+      }
+    } else {
+      ctx.reply(
+        "Solo gli amministratori possono rimuovere il limite di dimensione del messaggio."
+      );
+    }
+  }
+});
+
 // Middleware per gestire i messaggi in arrivo
 bot.on("message", async (ctx: typeof Context, next: () => void) => {
   const chatId = ctx.message?.chat?.id;
