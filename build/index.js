@@ -85,7 +85,7 @@ bot.command("stats", (ctx) => {
         ctx.reply("Non ci sono statistiche disponibili per questo gruppo.");
     }
 });
-bot.command("getadmins", (ctx) => __awaiter(void 0, void 0, void 0, function* () {
+bot.command("get_admins", (ctx) => __awaiter(void 0, void 0, void 0, function* () {
     const chatId = ctx.message.chat.id;
     try {
         const admins = yield ctx.telegram.getChatAdministrators(chatId);
@@ -132,7 +132,7 @@ const updateStats = (chatId, messageSizeKB) => {
 };
 bot.launch();
 app.get("/", (_req, res) => {
-    res.send("Server is running and bot is active add-limit-4.");
+    res.send("Server is running and bot is active add-limit-all-aws-2.");
 });
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => __awaiter(void 0, void 0, void 0, function* () {
