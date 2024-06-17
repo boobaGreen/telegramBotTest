@@ -205,6 +205,7 @@ const updateStats = (chatId: string, messageSizeKB: number) => {
 bot.launch();
 
 app.get("/test", (_req: any, res: any) => {
+  console.log("test endpoint hit! wsb81");
   res.status(200).json({
     success:
       "Server is running and bot is active (add-limit-all-aws-get and remove limit).",
