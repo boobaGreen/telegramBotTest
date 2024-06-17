@@ -3,7 +3,7 @@ name: CICD
 on:
   push:
     branches:
-      - add-limit
+      -
 
 jobs:
   build-and-deploy:
