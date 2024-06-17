@@ -204,10 +204,11 @@ const updateStats = (chatId: string, messageSizeKB: number) => {
 
 bot.launch();
 
-app.get("/", (_req: any, res: { send: (arg0: string) => void }) => {
-  res.send(
-    "Server is running and bot is active add-limit-all-aws-get and remove limit."
-  );
+app.get("/test", (_req: any, res: any) => {
+  res.status(200).json({
+    success:
+      "Server is running and bot is active (add-limit-all-aws-get and remove limit).",
+  });
 });
 
 const PORT = process.env.PORT || 3000;
