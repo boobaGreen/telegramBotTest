@@ -27,7 +27,7 @@ let groupLimits = {};
 const initializeGroupStats = (chatId) => {
     groupStats[chatId] = { totalMessages: 0, totalSizeKB: 0 };
 };
-bot.start((ctx) => ctx.reply("Benvenuto! Usa /help per visualizzare l'elenco dei comandi."));
+bot.start((ctx) => ctx.reply("Benvenuto! Usa /help per visualizzare l'elenco dei comandi. "));
 bot.help((ctx) => ctx.reply("Elenco dei comandi disponibili:\n/help - Mostra l'elenco dei comandi disponibili\n/stats - Visualizza le statistiche del gruppo"));
 // Function to check if the bot is still an administrator
 const isBotAdmin = (ctx) => __awaiter(void 0, void 0, void 0, function* () {
