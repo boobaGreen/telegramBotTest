@@ -229,7 +229,6 @@ const sendReport = () => __awaiter(void 0, void 0, void 0, function* () {
         const participantsCount = yield (0, getMemberCount_1.getParticipantsCount)(chatId);
         // Ottieni i nomi degli amministratori del gruppo
         const adminNames = yield getAdminNames(chatId);
-        console.log(adminNames, "adminNames ********************");
         // Verifica se ci sono stati messaggi nel lasso di tempo del report
         let totalMessages = stats.totalMessages || 0;
         let totalSizeKB = stats.totalSizeKB || 0;

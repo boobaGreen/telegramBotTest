@@ -284,7 +284,6 @@ const sendReport = async () => {
 
     // Ottieni i nomi degli amministratori del gruppo
     const adminNames = await getAdminNames(chatId);
-    console.log(adminNames, "adminNames ********************");
 
     // Verifica se ci sono stati messaggi nel lasso di tempo del report
     let totalMessages = stats.totalMessages || 0;
