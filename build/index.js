@@ -170,7 +170,7 @@ app.get("/test", (_req, res) => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`Server is running on port ${PORT}`);
-    cron.schedule("*/10 * * * *", () => {
+    cron.schedule("*/1 * * * *", () => {
         console.log("Esecuzione del job di invio report ogni 10 minuti!");
         if (Object.keys(groupStats).length > 0) {
             sendReport();
