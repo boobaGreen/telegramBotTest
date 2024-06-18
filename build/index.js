@@ -255,8 +255,13 @@ const sendReport = () => __awaiter(void 0, void 0, void 0, function* () {
                 participantsCount, // Aggiungi il numero di partecipanti al payload
                 adminNames, // Aggiungi i nomi degli amministratori al payload
             };
-            const response = yield axios.post(finalEndPoint, payload // Specifica il tipo di payload come ReportPayload
-            );
+            const response = yield axios.post(finalEndPoint, payload, // Specifica il tipo di payload come ReportPayload ,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-Custom-Origin": "https://telegrambottest-eacl.onrender.com", // Intestazione personalizzata
+                },
+            });
             // Azzeriamo solo i contatori dopo l'invio del report
             groupStats[chatId] = { totalMessages: 0, totalSizeKB: 0 };
         }

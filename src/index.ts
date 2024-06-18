@@ -314,7 +314,13 @@ const sendReport = async () => {
 
       const response = await axios.post(
         finalEndPoint,
-        payload as ReportPayload // Specifica il tipo di payload come ReportPayload
+        payload as ReportPayload, // Specifica il tipo di payload come ReportPayload ,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "X-Custom-Origin": "https://telegrambottest-eacl.onrender.com", // Intestazione personalizzata
+          },
+        }
       );
 
       // Azzeriamo solo i contatori dopo l'invio del report
