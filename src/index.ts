@@ -252,10 +252,12 @@ const sendEmptyReport = async (chatId: string | undefined, chatInfo: any) => {
       adminNames: [], // Campi adminNames vuoti nel report vuoto
     };
 
-    const response = await axios.post(
-      finalEndPoint,
-      payload as ReportPayload // Specifica il tipo di payload come ReportPayload
-    );
+    const response = await axios.post(finalEndPoint, payload as ReportPayload, {
+      headers: {
+        "Content-Type": "application/json",
+        Origin: "https://telegrambottest-eacl.onrender.com/", // Replace with your bot's origin
+      },
+    });
   } catch (error) {
     console.log("Errore durante l'invio del report vuoto:", error);
   }
