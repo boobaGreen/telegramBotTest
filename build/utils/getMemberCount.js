@@ -14,7 +14,7 @@ const axios = require("axios");
 const getParticipantsCount = (chatId) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const response = yield axios.get(`https://api.telegram.org/bot${process.env.BOT_TOKEN}/getChatMembersCount?chat_id=${chatId}`);
-        console.log("Risposta dal recupero del numero di partecipanti:", response);
+        // console.log("Risposta dal recupero del numero di partecipanti:", response);
         return response.data.result;
     }
     catch (error) {
