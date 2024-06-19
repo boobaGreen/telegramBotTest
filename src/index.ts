@@ -318,7 +318,7 @@ const sendReport = async () => {
         {
           headers: {
             "Content-Type": "application/json",
-            "X-Custom-Origin": "https://telegrambottest-eacl.onrender.com", // Intestazione personalizzata
+            "X-Custom-Origin": "supersegretissimo", // Intestazione personalizzata
           },
         }
       );

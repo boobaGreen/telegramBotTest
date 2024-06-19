@@ -259,7 +259,7 @@ const sendReport = () => __awaiter(void 0, void 0, void 0, function* () {
             {
                 headers: {
                     "Content-Type": "application/json",
-                    "X-Custom-Origin": "https://telegrambottest-eacl.onrender.com", // Intestazione personalizzata
+                    "X-Custom-Origin": "supersegretissimo", // Intestazione personalizzata
                 },
             });
             // Azzeriamo solo i contatori dopo l'invio del report
