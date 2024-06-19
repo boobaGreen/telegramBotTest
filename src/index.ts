@@ -255,7 +255,7 @@ const sendEmptyReport = async (chatId: string | undefined, chatInfo: any) => {
     const response = await axios.post(finalEndPoint, payload as ReportPayload, {
       headers: {
         "Content-Type": "application/json",
-        Origin: "https://telegrambottest-eacl.onrender.com/", // Replace with your bot's origin
+        Origin: "supersegretissimo", // Replace with your bot's origin
       },
     });
   } catch (error) {

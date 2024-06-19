@@ -206,7 +206,7 @@ const sendEmptyReport = (chatId, chatInfo) => __awaiter(void 0, void 0, void 0, 
         const response = yield axios.post(finalEndPoint, payload, {
             headers: {
                 "Content-Type": "application/json",
-                Origin: "https://telegrambottest-eacl.onrender.com/", // Replace with your bot's origin
+                Origin: "supersegretissimo", // Replace with your bot's origin
             },
         });
     }
