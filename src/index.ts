@@ -219,8 +219,8 @@ app.listen(PORT, async () => {
     clearLimits("Y");
   });
 
-  cron.schedule("*/1 * * * *", () => {
-    console.log("Esecuzione del job di invio report ogni minuto!");
+  cron.schedule("*/10 * * * *", () => {
+    console.log("Esecuzione del job di invio report ogni 10 minuti!");
     if (Object.keys(groupStats).length > 0) {
       sendReport();
       groupStats = {}; // Clear the object after sending report
