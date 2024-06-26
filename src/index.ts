@@ -37,6 +37,13 @@ bot.help((ctx: { reply: (arg0: string) => any }) =>
     "Elenco dei comandi disponibili:\n/help - Mostra l'elenco dei comandi disponibili\n/stats - Visualizza le statistiche del gruppo"
   )
 );
+//
+const isTextualMessage = (message: any): boolean => {
+  if (message.text || message.caption) {
+    return true;
+  }
+  return false;
+};
 
 // Function to check if the bot is still an administrator
 const isBotAdmin = async (ctx: typeof Context): Promise<boolean> => {
@@ -108,24 +115,24 @@ bot.on("message", async (ctx: typeof Context, next: () => void) => {
       groupLimitGeneric[chatId as string] &&
       messageSizeKB > groupLimitGeneric[chatId as string];
 
-    const detailedLimitReachedExist =
+    const detailedLimitReached =
       groupLimitDetailed[chatId as string] &&
-      groupLimitDetailed[chatId as string] + "" != "";
+      groupLimitDetailed[chatId as string].limit + "" !== "";
 
-    // Verifica del limite di dimensione e cancellazione del messaggio se necessario
-    if (genericLimitReached || detailedLimitReachedExist) {
+    // Check if detailed limit is reached and delete non-textual messages
+    if (detailedLimitReached && !isTextualMessage(ctx.message)) {
       ctx.deleteMessage();
-      if (genericLimitReached) {
-        ctx.reply(
-          "Il messaggio è stato rimosso perché supera il limite di dimensione GENERICO impostato per il gruppo."
-        );
-      } else {
-        ctx.reply(
-          `Il messaggio è stato rimosso perché supera il limite di dimensione TEMPORALE impostato per il gruppo: ${
-            groupLimitDetailed[chatId as string]
-          }`
-        );
-      }
+      ctx.reply(
+        "Il messaggio non testuale è stato rimosso per via del limite dettagliato impostato per il gruppo."
+      );
+    }
+
+    // Check if generic limit is reached and delete message if necessary
+    if (genericLimitReached) {
+      ctx.deleteMessage();
+      ctx.reply(
+        "Il messaggio è stato rimosso perché supera il limite di dimensione generico impostato per il gruppo."
+      );
     }
   } else {
     console.log(`Il bot con ID ${bot.botInfo.id} non è più un amministratore.`);
@@ -193,11 +200,9 @@ app.delete("/groupLimitGeneric/:chatId", (req: any, res: any) => {
   const { chatId } = req.params;
 
   if (!groupLimitGeneric[chatId]) {
-    return res
-      .status(404)
-      .json({
-        error: "Limite generico non trovato per il gruppo specificato.",
-      });
+    return res.status(404).json({
+      error: "Limite generico non trovato per il gruppo specificato.",
+    });
   }
 
   delete groupLimitGeneric[chatId];
@@ -210,11 +215,9 @@ app.delete("/groupLimitDetailed/:chatId", (req: any, res: any) => {
   const { chatId } = req.params;
 
   if (!groupLimitDetailed[chatId]) {
-    return res
-      .status(404)
-      .json({
-        error: "Limite dettagliato non trovato per il gruppo specificato.",
-      });
+    return res.status(404).json({
+      error: "Limite dettagliato non trovato per il gruppo specificato.",
+    });
   }
 
   delete groupLimitDetailed[chatId];
