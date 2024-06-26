@@ -11,14 +11,14 @@ const swd = new co2({ model: "swd" });
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
 import { calculateMessageSizeKB } from "./utils/getKbSize";
-import { GroupStats, ReportPayload } from "./types/types";
+import { GroupStats, ReportPayload, Limit } from "./types/types";
 import { getParticipantsCount } from "./utils/getMemberCount";
 
 let groupStats: Record<string, GroupStats> = {};
 
-let groupLimit: Record<string, number> = {};
+let groupLimitGeneric: Record<string, number> = {};
 
-let groupOpen: Record<string, boolean> = {};
+let groupLimitDetailed: Record<string, Limit> = {};
 
 const initializeGroupStats = (chatId: string) => {
   groupStats[chatId] = { totalMessages: 0, totalSizeKB: 0 };
@@ -100,16 +100,28 @@ bot.on("message", async (ctx: typeof Context, next: () => void) => {
     // Aggiornamento dei contatori
     updateStats(chatId as string, messageSizeKB);
 
+    const genericLimitReached =
+      groupLimitGeneric[chatId as string] &&
+      messageSizeKB > groupLimitGeneric[chatId as string];
+
+    const detailedLimitReachedExist =
+      groupLimitDetailed[chatId as string] &&
+      groupLimitDetailed[chatId as string] + "" != "";
+
     // Verifica del limite di dimensione e cancellazione del messaggio se necessario
-    if (
-      (groupLimit[chatId as string] &&
-        messageSizeKB > groupLimit[chatId as string]) ||
-      (groupOpen[chatId as string] && groupOpen[chatId as string])
-    ) {
+    if (genericLimitReached || detailedLimitReachedExist) {
       ctx.deleteMessage();
-      ctx.reply(
-        "Il messaggio è stato rimosso perché supera il limite di dimensione impostato per il gruppo."
-      );
+      if (genericLimitReached) {
+        ctx.reply(
+          "Il messaggio è stato rimosso perché supera il limite di dimensione GENERICO impostato per il gruppo."
+        );
+      } else {
+        ctx.reply(
+          `Il messaggio è stato rimosso perché supera il limite di dimensione TEMPORALE impostato per il gruppo: ${
+            groupLimitDetailed[chatId as string]
+          }`
+        );
+      }
     }
   } else {
     console.log(`Il bot con ID ${bot.botInfo.id} non è più un amministratore.`);
@@ -136,19 +148,75 @@ app.get("/test", (_req: any, res: any) => {
   });
 });
 
-app.get("/limit", (_req: any, res: any) => {
-  console.log("limit");
+app.post("/groupLimitGeneric", (req: any, res: any) => {
+  const { chatId, limit } = req.body;
+  if (!chatId || !limit) {
+    return res.status(400).json({ error: "chatId e limit sono richiesti." });
+  }
+
+  groupLimitGeneric[chatId] = limit;
   res.status(200).json({
-    success: "Limit",
+    success: `Limite generico impostato per il gruppo ${chatId}: ${limit} KB`,
   });
 });
+
+app.post("/groupLimitDetailed", (req: any, res: any) => {
+  const { chatId, limitType } = req.body;
+  if (!chatId || !limitType) {
+    return res
+      .status(400)
+      .json({ error: "chatId e limitType sono richiesti." });
+  }
+
+  if (!["H", "D", "W", "M", "Y"].includes(limitType)) {
+    return res.status(400).json({ error: "limitType non valido." });
+  }
+
+  groupLimitDetailed[chatId] = { limit: limitType };
+  res.status(200).json({
+    success: `Limite dettagliato impostato per il gruppo ${chatId}: ${limitType}`,
+  });
+});
+
+const clearLimits = (limitType: string) => {
+  for (const chatId in groupLimitDetailed) {
+    if (groupLimitDetailed[chatId].limit === limitType) {
+      delete groupLimitDetailed[chatId];
+    }
+  }
+};
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, async () => {
   console.log(`Server is running on port ${PORT}`);
 
+  cron.schedule("0 * * * *", () => {
+    console.log("Rimozione dei limiti orari (H)");
+    clearLimits("H");
+  });
+
+  cron.schedule("0 0 * * *", () => {
+    console.log("Rimozione dei limiti giornalieri (D)");
+    clearLimits("D");
+  });
+
+  cron.schedule("0 0 * * 0", () => {
+    console.log("Rimozione dei limiti settimanali (W)");
+    clearLimits("W");
+  });
+
+  cron.schedule("0 0 1 * *", () => {
+    console.log("Rimozione dei limiti mensili (M)");
+    clearLimits("M");
+  });
+
+  cron.schedule("0 0 1 1 *", () => {
+    console.log("Rimozione dei limiti annuali (Y)");
+    clearLimits("Y");
+  });
+
   cron.schedule("*/1 * * * *", () => {
-    console.log("Esecuzione del job di invio report ogni 10 minuti!");
+    console.log("Esecuzione del job di invio report ogni minuto!");
     if (Object.keys(groupStats).length > 0) {
       sendReport();
       groupStats = {}; // Clear the object after sending report

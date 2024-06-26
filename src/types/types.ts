@@ -3,7 +3,6 @@
 export interface GroupStats {
   totalMessages: number;
   totalSizeKB: number;
-  
 }
 
 export interface ReportPayload {
@@ -15,4 +14,8 @@ export interface ReportPayload {
   groupName?: string;
   participantsCount?: number;
   adminNames: string[]; // Aggiunta di adminNames come array di stringhe
+}
+
+export interface Limit {
+  limit: "H" | "D" | "W" | "M" | "Y";
 }
