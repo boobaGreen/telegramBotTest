@@ -15,7 +15,3 @@ export interface ReportPayload {
   participantsCount?: number;
   adminNames: string[]; // Aggiunta di adminNames come array di stringhe
 }
-
-export interface Limit {
-  limit: "H" | "D" | "W" | "M" | "Y";
-}
