@@ -24,15 +24,13 @@ const getKbSize_1 = require("./utils/getKbSize");
 const getMemberCount_1 = require("./utils/getMemberCount");
 let groupStats = {};
 let groupLimitGeneric = {};
-let groupLimitDetailed = {};
 const bodyParser = require("body-parser");
 app.use(bodyParser.json());
 const initializeGroupStats = (chatId) => {
     groupStats[chatId] = { totalMessages: 0, totalSizeKB: 0 };
 };
-bot.start((ctx) => ctx.reply("Benvenuto! Usa /help per visualizzare l'elenco dei comandi. "));
+bot.start((ctx) => ctx.reply("Benvenuto! Usa /help per visualizzare l'elenco dei comandi."));
 bot.help((ctx) => ctx.reply("Elenco dei comandi disponibili:\n/help - Mostra l'elenco dei comandi disponibili\n/stats - Visualizza le statistiche del gruppo"));
-//
 const isTextualMessage = (message) => {
     if (message.text || message.caption) {
         return true;
@@ -56,22 +54,11 @@ bot.command("limits", (ctx) => {
     var _a, _b;
     const chatId = (_b = (_a = ctx.message) === null || _a === void 0 ? void 0 : _a.chat) === null || _b === void 0 ? void 0 : _b.id;
     const genericLimit = groupLimitGeneric[chatId];
-    const detailedLimit = groupLimitDetailed[chatId];
-    if (!genericLimit && !detailedLimit) {
+    if (!genericLimit) {
         ctx.reply("Non ci sono limiti impostati per questo gruppo.");
     }
     else {
-        let response = `Limiti attuali per il gruppo ${chatId}:\n`;
-        if (genericLimit) {
-            response += `Limite gdsdsdenerico: ${genericLimit} KB\n`;
-        }
-        if (detailedLimit) {
-            response += `Limite dettagliato: ${detailedLimit.limit}\n`;
-        }
-        else {
-            response += `Limite dettagliato: Nessuno impostato\n`;
-        }
-        ctx.reply(response);
+        ctx.reply(`Limite generico: ${genericLimit} KB`);
     }
 });
 bot.command("stats", (ctx) => {
@@ -79,7 +66,7 @@ bot.command("stats", (ctx) => {
     const chatId = (_b = (_a = ctx.message) === null || _a === void 0 ? void 0 : _a.chat) === null || _b === void 0 ? void 0 : _b.id;
     if (chatId && groupStats[chatId]) {
         const stats = groupStats[chatId];
-        ctx.reply(`Statistiche del gruppo - ultimo frame  :\nMessaggi totali: ${stats.totalMessages}\nDimensione totale: ${stats.totalSizeKB.toFixed(3)} KB`);
+        ctx.reply(`Statistiche del gruppo - ultimo frame:\nMessaggi totali: ${stats.totalMessages}\nDimensione totale: ${stats.totalSizeKB.toFixed(3)} KB`);
     }
     else {
         ctx.reply("Non ci sono statistiche disponibili per questo gruppo.");
@@ -113,13 +100,6 @@ bot.on("message", (ctx, next) => __awaiter(void 0, void 0, void 0, function* () 
         updateStats(chatId, messageSizeKB);
         const genericLimitReached = groupLimitGeneric[chatId] &&
             messageSizeKB > groupLimitGeneric[chatId];
-        const detailedLimitReached = groupLimitDetailed[chatId] &&
-            groupLimitDetailed[chatId].limit + "" !== "";
-        // Check if detailed limit is reached and delete non-textual messages
-        if (detailedLimitReached && !isTextualMessage(ctx.message)) {
-            ctx.deleteMessage();
-            ctx.reply("Il messaggio non testuale è stato rimosso per via del limite dettagliato impostato per il gruppo.");
-        }
         // Check if generic limit is reached and delete message if necessary
         if (genericLimitReached) {
             ctx.deleteMessage();
@@ -155,28 +135,6 @@ app.post("/groupLimitGeneric", (req, res) => {
         success: `Limite generico impostato per il gruppo ${chatId}: ${limit} KB`,
     });
 });
-app.post("/groupLimitDetailed", (req, res) => {
-    const { chatId, limitType } = req.body;
-    if (!chatId || !limitType) {
-        return res
-            .status(400)
-            .json({ error: "chatId e limitType sono richiesti." });
-    }
-    if (!["H", "D", "W", "M", "Y"].includes(limitType)) {
-        return res.status(400).json({ error: "limitType non valido." });
-    }
-    groupLimitDetailed[chatId] = { limit: limitType };
-    res.status(200).json({
-        success: `Limite dettagliato impostato per il gruppo ${chatId}: ${limitType}`,
-    });
-});
-const clearLimits = (limitType) => {
-    for (const chatId in groupLimitDetailed) {
-        if (groupLimitDetailed[chatId].limit === limitType) {
-            delete groupLimitDetailed[chatId];
-        }
-    }
-};
 app.delete("/groupLimitGeneric/:chatId", (req, res) => {
     const { chatId } = req.params;
     if (!groupLimitGeneric[chatId]) {
@@ -189,41 +147,9 @@ app.delete("/groupLimitGeneric/:chatId", (req, res) => {
         success: `Limite generico rimosso per il gruppo ${chatId}`,
     });
 });
-app.delete("/groupLimitDetailed/:chatId", (req, res) => {
-    const { chatId } = req.params;
-    if (!groupLimitDetailed[chatId]) {
-        return res.status(404).json({
-            error: "Limite dettagliato non trovato per il gruppo specificato.",
-        });
-    }
-    delete groupLimitDetailed[chatId];
-    res.status(200).json({
-        success: `Limite dettagliato rimosso per il gruppo ${chatId}`,
-    });
-});
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`Server is running on port ${PORT}`);
-    cron.schedule("0 * * * *", () => {
-        console.log("Rimozione dei limiti orari (H)");
-        clearLimits("H");
-    });
-    cron.schedule("0 0 * * *", () => {
-        console.log("Rimozione dei limiti giornalieri (D)");
-        clearLimits("D");
-    });
-    cron.schedule("0 0 * * 0", () => {
-        console.log("Rimozione dei limiti settimanali (W)");
-        clearLimits("W");
-    });
-    cron.schedule("0 0 1 * *", () => {
-        console.log("Rimozione dei limiti mensili (M)");
-        clearLimits("M");
-    });
-    cron.schedule("0 0 1 1 *", () => {
-        console.log("Rimozione dei limiti annuali (Y)");
-        clearLimits("Y");
-    });
     cron.schedule("*/10 * * * *", () => {
         console.log("Esecuzione del job di invio report ogni 10 minuti!");
         if (Object.keys(groupStats).length > 0) {
@@ -310,7 +236,7 @@ const sendReport = () => __awaiter(void 0, void 0, void 0, function* () {
                 adminNames, // Aggiungi i nomi degli amministratori al payload
             };
             console.log(payload, "payload **************");
-            const response = yield axios.post(finalEndPoint, payload, // Specifica il tipo di payload come ReportPayload ,
+            const response = yield axios.post(finalEndPoint, payload, // Specifica il tipo di payload come ReportPayload,
             {
                 headers: {
                     "Content-Type": "application/json",
