@@ -3,6 +3,7 @@
 export interface GroupStats {
   totalMessages: number;
   totalSizeKB: number;
+  
 }
 
 export interface ReportPayload {

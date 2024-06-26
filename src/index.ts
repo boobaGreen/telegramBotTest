@@ -16,7 +16,9 @@ import { getParticipantsCount } from "./utils/getMemberCount";
 
 let groupStats: Record<string, GroupStats> = {};
 
-let groupLimits: Record<string, number> = {};
+let groupLimit: Record<string, number> = {};
+
+let groupOpen: Record<string, boolean> = {};
 
 const initializeGroupStats = (chatId: string) => {
   groupStats[chatId] = { totalMessages: 0, totalSizeKB: 0 };
@@ -48,23 +50,6 @@ const isBotAdmin = async (ctx: typeof Context): Promise<boolean> => {
   }
 };
 
-const isUserAdmin = async (
-  ctx: typeof Context,
-  userId: number
-): Promise<boolean> => {
-  try {
-    const administrators = await ctx.telegram.getChatAdministrators(
-      ctx.message?.chat?.id
-    );
-    return administrators.some(
-      (admin: { user: { id: number } }) => admin.user.id === userId
-    );
-  } catch (error) {
-    console.error("Errore durante il recupero degli amministratori:", error);
-    return false;
-  }
-};
-
 bot.command("stats", (ctx: typeof Context) => {
   const chatId = ctx.message?.chat?.id;
   if (chatId && groupStats[chatId]) {
@@ -76,32 +61,6 @@ bot.command("stats", (ctx: typeof Context) => {
     );
   } else {
     ctx.reply("Non ci sono statistiche disponibili per questo gruppo.");
-  }
-});
-
-bot.command("set_limit", async (ctx: typeof Context) => {
-  const chatId = ctx.message?.chat?.id;
-  const userId = ctx.message?.from?.id;
-
-  if (chatId && userId) {
-    const isAdmin = await isUserAdmin(ctx, userId);
-    if (isAdmin) {
-      const limit = parseFloat(ctx.message?.text.split(" ")[1]);
-      if (!isNaN(limit) && limit > 0) {
-        groupLimits[chatId] = limit;
-        ctx.reply(
-          `Limite di dimensione del messaggio impostato a ${limit} KB.`
-        );
-      } else {
-        ctx.reply(
-          "Per favore, fornisci un limite di dimensione valido (numero positivo)."
-        );
-      }
-    } else {
-      ctx.reply(
-        "Solo gli amministratori possono impostare il limite di dimensione del messaggio."
-      );
-    }
   }
 });
 
@@ -119,42 +78,6 @@ bot.command("get_admins", async (ctx: typeof Context) => {
     ctx.reply(
       "Si è verificato un errore durante il recupero degli amministratori."
     );
-  }
-});
-
-bot.command("get_limit", (ctx: typeof Context) => {
-  const chatId = ctx.message?.chat?.id;
-  if (chatId && groupLimits[chatId] !== undefined) {
-    ctx.reply(
-      `Il limite di dimensione del messaggio è ${groupLimits[chatId]} KB.`
-    );
-  } else {
-    ctx.reply(
-      "Non è stato impostato nessun limite di dimensione per questo gruppo."
-    );
-  }
-});
-
-bot.command("remove_limit", async (ctx: typeof Context) => {
-  const chatId = ctx.message?.chat?.id;
-  const userId = ctx.message?.from?.id;
-
-  if (chatId && userId) {
-    const isAdmin = await isUserAdmin(ctx, userId);
-    if (isAdmin) {
-      if (groupLimits[chatId] !== undefined) {
-        delete groupLimits[chatId];
-        ctx.reply("Il limite di dimensione del messaggio è stato rimosso.");
-      } else {
-        ctx.reply(
-          "Non è stato impostato nessun limite di dimensione per questo gruppo."
-        );
-      }
-    } else {
-      ctx.reply(
-        "Solo gli amministratori possono rimuovere il limite di dimensione del messaggio."
-      );
-    }
   }
 });
 
@@ -179,12 +102,13 @@ bot.on("message", async (ctx: typeof Context, next: () => void) => {
 
     // Verifica del limite di dimensione e cancellazione del messaggio se necessario
     if (
-      groupLimits[chatId as string] &&
-      messageSizeKB > groupLimits[chatId as string]
+      (groupLimit[chatId as string] &&
+        messageSizeKB > groupLimit[chatId as string]) ||
+      (groupOpen[chatId as string] && groupOpen[chatId as string])
     ) {
       ctx.deleteMessage();
       ctx.reply(
-        "Il messaggio è stato rimosso perché supera il limite di dimensione impostato."
+        "Il messaggio è stato rimosso perché supera il limite di dimensione impostato per il gruppo."
       );
     }
   } else {
@@ -209,6 +133,13 @@ app.get("/test", (_req: any, res: any) => {
   res.status(200).json({
     success:
       "Server is running and bot is active (add-limit-all-aws-get and remove limit).",
+  });
+});
+
+app.get("/limit", (_req: any, res: any) => {
+  console.log("limit");
+  res.status(200).json({
+    success: "Limit",
   });
 });
 

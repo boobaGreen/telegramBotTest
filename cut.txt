@@ -1,0 +1,79 @@
+// const isUserAdmin = async (
+//   ctx: typeof Context,
+//   userId: number
+// ): Promise<boolean> => {
+//   try {
+//     const administrators = await ctx.telegram.getChatAdministrators(
+//       ctx.message?.chat?.id
+//     );
+//     return administrators.some(
+//       (admin: { user: { id: number } }) => admin.user.id === userId
+//     );
+//   } catch (error) {
+//     console.error("Errore durante il recupero degli amministratori:", error);
+//     return false;
+//   }
+// };
+
+
+// bot.command("get_limit", (ctx: typeof Context) => {
+//   const chatId = ctx.message?.chat?.id;
+//   if (chatId && groupLimits[chatId] !== undefined) {
+//     ctx.reply(
+//       `Il limite di dimensione del messaggio è ${groupLimits[chatId]} KB.`
+//     );
+//   } else {
+//     ctx.reply(
+//       "Non è stato impostato nessun limite di dimensione per questo gruppo."
+//     );
+//   }
+// });
+
+// bot.command("remove_limit", async (ctx: typeof Context) => {
+//   const chatId = ctx.message?.chat?.id;
+//   const userId = ctx.message?.from?.id;
+
+//   if (chatId && userId) {
+//     const isAdmin = await isUserAdmin(ctx, userId);
+//     if (isAdmin) {
+//       if (groupLimits[chatId] !== undefined) {
+//         delete groupLimits[chatId];
+//         ctx.reply("Il limite di dimensione del messaggio è stato rimosso.");
+//       } else {
+//         ctx.reply(
+//           "Non è stato impostato nessun limite di dimensione per questo gruppo."
+//         );
+//       }
+//     } else {
+//       ctx.reply(
+//         "Solo gli amministratori possono rimuovere il limite di dimensione del messaggio."
+//       );
+//     }
+//   }
+// });
+
+// bot.command("set_limit", async (ctx: typeof Context) => {
+//   const chatId = ctx.message?.chat?.id;
+//   const userId = ctx.message?.from?.id;
+
+//   if (chatId && userId) {
+//     const isAdmin = await isUserAdmin(ctx, userId);
+//     if (isAdmin) {
+//       const limit = parseFloat(ctx.message?.text.split(" ")[1]);
+//       if (!isNaN(limit) && limit > 0) {
+//         groupLimits[chatId] = limit;
+//         ctx.reply(
+//           `Limite di dimensione del messaggio impostato a ${limit} KB.`
+//         );
+//       } else {
+//         ctx.reply(
+//           "Per favore, fornisci un limite di dimensione valido (numero positivo)."
+//         );
+//       }
+//     } else {
+//       ctx.reply(
+//         "Solo gli amministratori possono impostare il limite di dimensione del messaggio."
+//       );
+//     }
+//   }
+// });
