@@ -189,7 +189,39 @@ const clearLimits = (limitType: string) => {
     }
   }
 };
+app.delete("/groupLimitGeneric/:chatId", (req: any, res: any) => {
+  const { chatId } = req.params;
 
+  if (!groupLimitGeneric[chatId]) {
+    return res
+      .status(404)
+      .json({
+        error: "Limite generico non trovato per il gruppo specificato.",
+      });
+  }
+
+  delete groupLimitGeneric[chatId];
+  res.status(200).json({
+    success: `Limite generico rimosso per il gruppo ${chatId}`,
+  });
+});
+
+app.delete("/groupLimitDetailed/:chatId", (req: any, res: any) => {
+  const { chatId } = req.params;
+
+  if (!groupLimitDetailed[chatId]) {
+    return res
+      .status(404)
+      .json({
+        error: "Limite dettagliato non trovato per il gruppo specificato.",
+      });
+  }
+
+  delete groupLimitDetailed[chatId];
+  res.status(200).json({
+    success: `Limite dettagliato rimosso per il gruppo ${chatId}`,
+  });
+});
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, async () => {
   console.log(`Server is running on port ${PORT}`);
