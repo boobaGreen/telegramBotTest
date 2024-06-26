@@ -61,6 +61,30 @@ const isBotAdmin = async (ctx: typeof Context): Promise<boolean> => {
   }
 };
 
+bot.command("limits", (ctx: typeof Context) => {
+  const chatId = ctx.message.chat.id;
+  const genericLimit = groupLimitGeneric[chatId];
+  const detailedLimit = groupLimitDetailed[chatId];
+
+  if (!genericLimit && !detailedLimit) {
+    ctx.reply("Non ci sono limiti impostati per questo gruppo.");
+  } else {
+    let response = `Limiti attuali per il gruppo ${chatId}:\n`;
+
+    if (genericLimit) {
+      response += `Limite generico: ${genericLimit} KB\n`;
+    }
+
+    if (detailedLimit) {
+      response += `Limite dettagliato: ${detailedLimit.limit}\n`;
+    } else {
+      response += `Limite dettagliato: Nessuno impostato\n`;
+    }
+
+    ctx.reply(response);
+  }
+});
+
 bot.command("stats", (ctx: typeof Context) => {
   const chatId = ctx.message?.chat?.id;
   if (chatId && groupStats[chatId]) {
