@@ -32,6 +32,13 @@ const initializeGroupStats = (chatId) => {
 };
 bot.start((ctx) => ctx.reply("Benvenuto! Usa /help per visualizzare l'elenco dei comandi. "));
 bot.help((ctx) => ctx.reply("Elenco dei comandi disponibili:\n/help - Mostra l'elenco dei comandi disponibili\n/stats - Visualizza le statistiche del gruppo"));
+//
+const isTextualMessage = (message) => {
+    if (message.text || message.caption) {
+        return true;
+    }
+    return false;
+};
 // Function to check if the bot is still an administrator
 const isBotAdmin = (ctx) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
@@ -43,6 +50,28 @@ const isBotAdmin = (ctx) => __awaiter(void 0, void 0, void 0, function* () {
     catch (error) {
         console.error("Errore durante il recupero degli amministratori:", error);
         return false;
+    }
+});
+bot.command("limits", (ctx) => {
+    var _a, _b;
+    const chatId = (_b = (_a = ctx.message) === null || _a === void 0 ? void 0 : _a.chat) === null || _b === void 0 ? void 0 : _b.id;
+    const genericLimit = groupLimitGeneric[chatId];
+    const detailedLimit = groupLimitDetailed[chatId];
+    if (!genericLimit && !detailedLimit) {
+        ctx.reply("Non ci sono limiti impostati per questo gruppo.");
+    }
+    else {
+        let response = `Limiti attuali per il gruppo ${chatId}:\n`;
+        if (genericLimit) {
+            response += `Limite gdsdsdenerico: ${genericLimit} KB\n`;
+        }
+        if (detailedLimit) {
+            response += `Limite dettagliato: ${detailedLimit.limit}\n`;
+        }
+        else {
+            response += `Limite dettagliato: Nessuno impostato\n`;
+        }
+        ctx.reply(response);
     }
 });
 bot.command("stats", (ctx) => {
@@ -84,17 +113,17 @@ bot.on("message", (ctx, next) => __awaiter(void 0, void 0, void 0, function* () 
         updateStats(chatId, messageSizeKB);
         const genericLimitReached = groupLimitGeneric[chatId] &&
             messageSizeKB > groupLimitGeneric[chatId];
-        const detailedLimitReachedExist = groupLimitDetailed[chatId] &&
-            groupLimitDetailed[chatId] + "" != "";
-        // Verifica del limite di dimensione e cancellazione del messaggio se necessario
-        if (genericLimitReached || detailedLimitReachedExist) {
+        const detailedLimitReached = groupLimitDetailed[chatId] &&
+            groupLimitDetailed[chatId].limit + "" !== "";
+        // Check if detailed limit is reached and delete non-textual messages
+        if (detailedLimitReached && !isTextualMessage(ctx.message)) {
             ctx.deleteMessage();
-            if (genericLimitReached) {
-                ctx.reply("Il messaggio è stato rimosso perché supera il limite di dimensione GENERICO impostato per il gruppo.");
-            }
-            else {
-                ctx.reply(`Il messaggio è stato rimosso perché supera il limite di dimensione TEMPORALE impostato per il gruppo: ${groupLimitDetailed[chatId]}`);
-            }
+            ctx.reply("Il messaggio non testuale è stato rimosso per via del limite dettagliato impostato per il gruppo.");
+        }
+        // Check if generic limit is reached and delete message if necessary
+        if (genericLimitReached) {
+            ctx.deleteMessage();
+            ctx.reply("Il messaggio è stato rimosso perché supera il limite di dimensione generico impostato per il gruppo.");
         }
     }
     else {
@@ -151,9 +180,7 @@ const clearLimits = (limitType) => {
 app.delete("/groupLimitGeneric/:chatId", (req, res) => {
     const { chatId } = req.params;
     if (!groupLimitGeneric[chatId]) {
-        return res
-            .status(404)
-            .json({
+        return res.status(404).json({
             error: "Limite generico non trovato per il gruppo specificato.",
         });
     }
@@ -165,9 +192,7 @@ app.delete("/groupLimitGeneric/:chatId", (req, res) => {
 app.delete("/groupLimitDetailed/:chatId", (req, res) => {
     const { chatId } = req.params;
     if (!groupLimitDetailed[chatId]) {
-        return res
-            .status(404)
-            .json({
+        return res.status(404).json({
             error: "Limite dettagliato non trovato per il gruppo specificato.",
         });
     }

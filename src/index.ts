@@ -62,7 +62,7 @@ const isBotAdmin = async (ctx: typeof Context): Promise<boolean> => {
 };
 
 bot.command("limits", (ctx: typeof Context) => {
-  const chatId = ctx.message.chat.id;
+  const chatId = ctx.message?.chat?.id;
   const genericLimit = groupLimitGeneric[chatId];
   const detailedLimit = groupLimitDetailed[chatId];
 
@@ -72,7 +72,7 @@ bot.command("limits", (ctx: typeof Context) => {
     let response = `Limiti attuali per il gruppo ${chatId}:\n`;
 
     if (genericLimit) {
-      response += `Limite generico: ${genericLimit} KB\n`;
+      response += `Limite gdsdsdenerico: ${genericLimit} KB\n`;
     }
 
     if (detailedLimit) {
