@@ -20,6 +20,10 @@ let groupLimitGeneric: Record<string, number> = {};
 
 let groupLimitDetailed: Record<string, Limit> = {};
 
+const bodyParser = require("body-parser");
+
+app.use(bodyParser.json());
+
 const initializeGroupStats = (chatId: string) => {
   groupStats[chatId] = { totalMessages: 0, totalSizeKB: 0 };
 };
