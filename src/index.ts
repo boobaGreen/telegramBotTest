@@ -47,7 +47,7 @@ const initializeGroupStats = (chatId: string) => {
 };
 
 bot.start((ctx: { reply: (arg0: string) => any }) =>
-  ctx.reply("Benvenuto! Usa /help per visualizzare l'elenco dei comandi.")
+  ctx.reply("Benvenuto a te! Usa /help per visualizzare l'elenco dei comandi.")
 );
 
 bot.help((ctx: { reply: (arg0: string) => any }) =>
