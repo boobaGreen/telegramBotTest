@@ -196,8 +196,8 @@ app.delete("/groupLimitGeneric/:chatId", (req, res) => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`Server is running on port ${PORT}`);
-    cron.schedule("*/1 * * * *", () => {
-        console.log("Esecuzione del job di invio report ogni 1 minuti!");
+    cron.schedule("*/10 * * * *", () => {
+        console.log("Esecuzione del job di invio report ogni 10 minuti!");
         if (Object.keys(groupStats).length > 0) {
             sendReport();
             groupStats = {}; // Clear the object after sending report
