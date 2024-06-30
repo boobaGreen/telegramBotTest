@@ -1,33 +1,33 @@
-name: CICD
+# name: CICD
 
-on:
-  push:
-    branches:
-      -
+# on:
+#   push:
+#     branches:
+#       -
 
-jobs:
-  build-and-deploy:
-    runs-on: [ubuntu-latest]
-    steps:
-      - name: Checkout Source
-        uses: actions/checkout@v4
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - name: Install Dependencies
-        run: npm install
-      - name: Genrate Deployment Package
-        run: zip -r co2-bot.zip .
-      - name: Deploy to EB
-        uses: einaregilsson/beanstalk-deploy@v21
-        with:
-          aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
-          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          application_name: "co2-bot"
-          environment_name: "Co2-bot-env"
-          version_label: ${{ github.sha }}
-          region: us-west-2
-          deployment_package: co2-bot.zip
-          use_existing_version_if_available: true
-          wait_for_deployment: true
+# jobs:
+#   build-and-deploy:
+#     runs-on: [ubuntu-latest]
+#     steps:
+#       - name: Checkout Source
+#         uses: actions/checkout@v4
+#       - name: Setup Node
+#         uses: actions/setup-node@v4
+#         with:
+#           node-version: 20
+#       - name: Install Dependencies
+#         run: npm install
+#       - name: Genrate Deployment Package
+#         run: zip -r co2-bot.zip .
+#       - name: Deploy to EB
+#         uses: einaregilsson/beanstalk-deploy@v21
+#         with:
+#           aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
+#           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#           application_name: "co2-bot"
+#           environment_name: "Co2-bot-env"
+#           version_label: ${{ github.sha }}
+#           region: us-west-2
+#           deployment_package: co2-bot.zip
+#           use_existing_version_if_available: true
+#           wait_for_deployment: true
