@@ -13,6 +13,8 @@ const bot = new Telegraf(process.env.BOT_TOKEN);
 import { calculateMessageSizeKB } from "./utils/getKbSize";
 import { GroupStats, ReportPayload } from "./types/types";
 import { getParticipantsCount } from "./utils/getMemberCount";
+import { getTypemessages } from "./utils/getTypeMessage";
+import { constants } from "buffer";
 
 let groupStats: Record<string, GroupStats> = {};
 let groupLimitGeneric: Record<string, number> = {};
@@ -37,6 +39,8 @@ const initializeGroupStats = (chatId: string) => {
     pollTotalSize: 0,
     stickerTotalMessages: 0,
     stickerTotalSize: 0,
+    voiceTotalMessages: 0,
+    voiceTotalSize: 0,
   };
 };
 
@@ -131,8 +135,10 @@ bot.on("message", async (ctx: typeof Context, next: () => void) => {
       calculateMessageSizeKB(ctx.message).toString()
     );
 
+    const typeOfMessage = getTypemessages(ctx.message);
+
     // Aggiornamento dei contatori
-    updateStats(chatId as string, messageSizeKB);
+    updateStats(chatId as string, messageSizeKB, typeOfMessage);
 
     const genericLimitReached =
       groupLimitGeneric[chatId as string] &&
@@ -153,10 +159,38 @@ bot.on("message", async (ctx: typeof Context, next: () => void) => {
 });
 
 // Funzione per aggiornare i contatori totalMessages e totalSizeKB
-const updateStats = (chatId: string, messageSizeKB: number) => {
+const updateStats = (
+  chatId: string,
+  messageSizeKB: number,
+  typeOfMessage: string
+) => {
   if (groupStats[chatId]) {
     groupStats[chatId].totalMessages++;
     groupStats[chatId].totalSizeKB += messageSizeKB;
+    if (typeOfMessage === "text") {
+      groupStats[chatId].textTotalMessages++;
+      groupStats[chatId].textTotalSize += messageSizeKB;
+    }
+    if (typeOfMessage === "photo") {
+      groupStats[chatId].photoTotalMessages++;
+      groupStats[chatId].photoTotalSize += messageSizeKB;
+    }
+    if (typeOfMessage === "video") {
+      groupStats[chatId].videoTotalMessages++;
+      groupStats[chatId].videoTotalSize += messageSizeKB;
+    }
+    if (typeOfMessage === "document") {
+      groupStats[chatId].documentTotalMessages++;
+      groupStats[chatId].documentTotalSize += messageSizeKB;
+    }
+    if (typeOfMessage === "poll") {
+      groupStats[chatId].pollTotalMessages++;
+      groupStats[chatId].pollTotalSize += messageSizeKB;
+    }
+    if (typeOfMessage === "sticker") {
+      groupStats[chatId].stickerTotalMessages++;
+      groupStats[chatId].stickerTotalSize += messageSizeKB;
+    }
   }
 };
 
@@ -232,6 +266,34 @@ const sendEmptyReport = async (chatId: string | undefined, chatInfo: any) => {
       totalSizeKB: 0,
       emissionsOneByteMethod: 0,
       emissionsSWDMethod: 0,
+      textTotalMessages: 0,
+      textTotalSize: 0,
+      textEmissionsOneByteMethod: 0,
+      textEmissionsSWDMethod: 0,
+      photoTotalMessages: 0,
+      photoTotalSize: 0,
+      photoEmissionsOneByteMethod: 0,
+      photoEmissionsSWDMethod: 0,
+      videoTotalMessages: 0,
+      videoTotalSize: 0,
+      videoEmissionsOneByteMethod: 0,
+      videoEmissionsSWDMethod: 0,
+      voiceTotalMessages: 0,
+      voiceTotalSize: 0,
+      voiceEmissionsOneByteMethod: 0,
+      voiceEmissionsSWDMethod: 0,
+      documentTotalMessages: 0,
+      documentTotalSize: 0,
+      documentEmissionsOneByteMethod: 0,
+      documentEmissionsSWDMethod: 0,
+      pollTotalMessages: 0,
+      pollTotalSize: 0,
+      pollEmissionsOneByteMethod: 0,
+      pollEmissionsSWDMethod: 0,
+      stickerTotalMessages: 0,
+      stickerTotalSize: 0,
+      stickerEmissionsOneByteMethod: 0,
+      stickerEmissionsSWDMethod: 0,
       groupName: chatInfo.title,
       participantsCount: chatInfo.membersCount,
       adminNames: [], // Campi adminNames vuoti nel report vuoto
@@ -263,8 +325,44 @@ const getAdminNames = async (chatId: string) => {
 const sendReport = async () => {
   for (const [chatId, stats] of Object.entries(groupStats)) {
     const totalSizeBytes = stats.totalSizeKB * 1024;
+    const textTotalSizeBytes = stats.textTotalSize * 1024;
+    const photoTotalSizeBytes = stats.photoTotalSize * 1024;
+    const videoTotalSizeBytes = stats.videoTotalSize * 1024;
+    const documentTotalSizeBytes = stats.documentTotalSize * 1024;
+    const voiceTotalSizeBytes = stats.voiceTotalSize * 1024;
+    const stickerTotalSizeBytes = stats.stickerTotalSize * 1024;
     const emissionsOneByteMethod = oneByte.perByte(totalSizeBytes).toFixed(7);
     const emissionsSWDMethod = swd.perByte(totalSizeBytes).toFixed(7);
+    const textEmissionsOneByteMethod = oneByte
+      .perByte(textTotalSizeBytes)
+      .toFixed(7);
+    const textEmissionsSWDMethod = swd.perByte(textTotalSizeBytes).toFixed(7);
+    const photoEmissionsOneByteMethod = oneByte
+      .perByte(photoTotalSizeBytes)
+      .toFixed(7);
+    const photoEmissionsSWDMethod = swd.perByte(photoTotalSizeBytes).toFixed(7);
+    const videoEmissionsOneByteMethod = oneByte
+      .perByte(videoTotalSizeBytes)
+      .toFixed(7);
+    const videoEmissionsSWDMethod = swd.perByte(videoTotalSizeBytes).toFixed(7);
+    const documentEmissionsOneByteMethod = oneByte
+      .perByte(documentTotalSizeBytes)
+      .toFixed(7);
+    const documentEmissionsSWDMethod = swd
+      .perByte(documentTotalSizeBytes)
+      .toFixed(7);
+    const voiceEmissionsOneByteMethod = oneByte
+      .perByte(voiceTotalSizeBytes)
+      .toFixed(7);
+    const voiceEmissionsSWDMethod = swd.perByte(voiceTotalSizeBytes).toFixed(7);
+    const stickerEmissionsOneByteMethod = oneByte
+      .perByte(stickerTotalSizeBytes)
+      .toFixed(7);
+    const stickerEmissionsSWDMethod = swd
+      .perByte(stickerTotalSizeBytes)
+      .toFixed(7);
+    const pollEmissionsOneByteMethod = oneByte.perByte(0).toFixed(7);
+    const pollEmissionsSWDMethod = swd.perByte(0).toFixed(7);
 
     // Ottieni il numero di partecipanti del gruppo
     const participantsCount = await getParticipantsCount(chatId);
@@ -283,6 +381,73 @@ const sendReport = async () => {
       ? 0
       : parseFloat(emissionsSWDMethod);
 
+    let textTotalMessages = stats.textTotalMessages || 0;
+    let textTotalSize = stats.textTotalSize || 0;
+    let textEmissionsOneByte = isNaN(parseFloat(textEmissionsOneByteMethod))
+      ? 0
+      : parseFloat(emissionsOneByteMethod);
+    let textEmissionsSWD = isNaN(parseFloat(emissionsSWDMethod))
+      ? 0
+      : parseFloat(emissionsSWDMethod);
+
+    let photoTotalMessages = stats.photoTotalMessages || 0;
+    let photoTotalSize = stats.photoTotalSize || 0;
+    let photoEmissionsOneByte = isNaN(parseFloat(photoEmissionsOneByteMethod))
+      ? 0
+      : parseFloat(photoEmissionsOneByteMethod);
+    let photoEmissionsSWD = isNaN(parseFloat(photoEmissionsSWDMethod))
+      ? 0
+      : parseFloat(photoEmissionsSWDMethod);
+
+    let videoTotalMessages = stats.videoTotalMessages || 0;
+    let videoTotalSize = stats.videoTotalSize || 0;
+    let videoEmissionsOneByte = isNaN(parseFloat(videoEmissionsOneByteMethod))
+      ? 0
+      : parseFloat(videoEmissionsOneByteMethod);
+    let videoEmissionsSWD = isNaN(parseFloat(videoEmissionsSWDMethod))
+      ? 0
+      : parseFloat(videoEmissionsSWDMethod);
+
+    let documentTotalMessages = stats.documentTotalMessages || 0;
+    let documentTotalSize = stats.documentTotalSize || 0;
+    let documentEmissionsOneByte = isNaN(
+      parseFloat(documentEmissionsOneByteMethod)
+    )
+      ? 0
+      : parseFloat(documentEmissionsOneByteMethod);
+    let documentEmissionsSWD = isNaN(parseFloat(documentEmissionsSWDMethod))
+      ? 0
+      : parseFloat(documentEmissionsSWDMethod);
+
+    let pollTotalMessages = stats.pollTotalMessages || 0;
+    let pollTotalSize = stats.pollTotalSize || 0;
+    let pollEmissionsOneByte = isNaN(parseFloat(pollEmissionsOneByteMethod))
+      ? 0
+      : parseFloat(pollEmissionsOneByteMethod);
+    let pollEmissionsSWD = isNaN(parseFloat(pollEmissionsSWDMethod))
+      ? 0
+      : parseFloat(pollEmissionsSWDMethod);
+
+    let stickerTotalMessages = stats.stickerTotalMessages || 0;
+    let stickerTotalSize = stats.stickerTotalSize || 0;
+    let stickerEmissionsOneByte = isNaN(
+      parseFloat(stickerEmissionsOneByteMethod)
+    )
+      ? 0
+      : parseFloat(stickerEmissionsOneByteMethod);
+    let stickerEmissionsSWD = isNaN(parseFloat(stickerEmissionsSWDMethod))
+      ? 0
+      : parseFloat(stickerEmissionsSWDMethod);
+
+    let voiceTotalMessages = stats.voiceTotalMessages || 0;
+    let voiceTotalSize = stats.voiceTotalSize || 0;
+    let voiceEmissionsOneByte = isNaN(parseFloat(voiceEmissionsOneByteMethod))
+      ? 0
+      : parseFloat(voiceEmissionsOneByteMethod);
+    let voiceEmissionsSWD = isNaN(parseFloat(voiceEmissionsSWDMethod))
+      ? 0
+      : parseFloat(voiceEmissionsSWDMethod);
+
     try {
       const chatInfo = await bot.telegram.getChat(chatId);
 
@@ -292,6 +457,34 @@ const sendReport = async () => {
         totalSizeKB,
         emissionsOneByteMethod: emissionsOneByte,
         emissionsSWDMethod: emissionsSWD,
+        textTotalMessages,
+        textTotalSize,
+        textEmissionsOneByteMethod: textEmissionsOneByte,
+        textEmissionsSWDMethod: textEmissionsSWD,
+        photoTotalMessages,
+        photoTotalSize,
+        photoEmissionsOneByteMethod: photoEmissionsOneByte,
+        photoEmissionsSWDMethod: photoEmissionsSWD,
+        videoTotalMessages,
+        videoTotalSize,
+        videoEmissionsOneByteMethod: videoEmissionsOneByte,
+        videoEmissionsSWDMethod: videoEmissionsSWD,
+        voiceTotalMessages: voiceTotalMessages,
+        voiceTotalSize: voiceTotalSize,
+        voiceEmissionsOneByteMethod: voiceEmissionsOneByte,
+        voiceEmissionsSWDMethod: voiceEmissionsSWD,
+        documentTotalMessages,
+        documentTotalSize,
+        documentEmissionsOneByteMethod: documentEmissionsOneByte,
+        documentEmissionsSWDMethod: documentEmissionsSWD,
+        pollTotalMessages,
+        pollTotalSize,
+        pollEmissionsOneByteMethod: pollEmissionsOneByte,
+        pollEmissionsSWDMethod: pollEmissionsSWD,
+        stickerTotalMessages,
+        stickerTotalSize,
+        stickerEmissionsOneByteMethod: stickerEmissionsOneByte,
+        stickerEmissionsSWDMethod: stickerEmissionsSWD,
         groupName: chatInfo.title,
         participantsCount, // Aggiungi il numero di partecipanti al payload
         adminNames, // Aggiungi i nomi degli amministratori al payload
@@ -309,7 +502,24 @@ const sendReport = async () => {
       );
 
       // Azzeriamo solo i contatori dopo l'invio del report
-      groupStats[chatId] = { totalMessages: 0, totalSizeKB: 0 };
+      groupStats[chatId] = {
+        totalMessages: 0,
+        totalSizeKB: 0,
+        textTotalMessages: 0,
+        textTotalSize: 0,
+        photoTotalMessages: 0,
+        photoTotalSize: 0,
+        videoTotalMessages: 0,
+        videoTotalSize: 0,
+        voiceTotalMessages: 0,
+        voiceTotalSize: 0,
+        documentTotalMessages: 0,
+        documentTotalSize: 0,
+        pollTotalMessages: 0,
+        pollTotalSize: 0,
+        stickerTotalMessages: 0,
+        stickerTotalSize: 0,
+      };
     } catch (error) {
       if ((error as any).response && (error as any).response.status === 403) {
         console.error(

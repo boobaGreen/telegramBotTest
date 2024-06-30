@@ -9,6 +9,8 @@ export interface GroupStats {
   photoTotalSize: 0;
   videoTotalMessages: 0;
   videoTotalSize: 0;
+  voiceTotalMessages: 0;
+  voiceTotalSize: 0;
   documentTotalMessages: 0;
   documentTotalSize: 0;
   pollTotalMessages: 0;
@@ -31,6 +33,10 @@ export interface ReportPayload {
   photoTotalSize: number;
   photoEmissionsOneByteMethod: number;
   photoEmissionsSWDMethod: number;
+  voiceTotalMessages: number;
+  voiceTotalSize: number;
+  voiceEmissionsOneByteMethod: number;
+  voiceEmissionsSWDMethod: number;
   videoTotalMessages: number;
   videoTotalSize: number;
   videoEmissionsOneByteMethod: number;
