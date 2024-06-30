@@ -50,7 +50,7 @@ bot.start((ctx: { reply: (arg0: string) => any }) =>
 
 bot.help((ctx: { reply: (arg0: string) => any }) =>
   ctx.reply(
-    "Elenco dei comandi disponibili:\n/help - Mostra l'elenco dei comandi disponibili\n/stats - Visualizza le statistiche del gruppo"
+    "Elenco dei comandi disponibili:\n/help - Mostra l'elenco dei comandi disponibili\n/stats - Visualizza le statistiche del gruppo\n/get_admins - Indica gli admin del gruppo\n/start - Saluta il bot\n/limits - Mostra il limite di dimensione impostato per il gruppo"
   )
 );
 
@@ -199,8 +199,7 @@ bot.launch();
 app.get("/test", (_req: any, res: any) => {
   console.log("test endpoint hit! wsb81");
   res.status(200).json({
-    success:
-      "Server is running and bot is active (add-limit-all-aws-get and remove limit).",
+    success: "Server is running and bot is active .",
   });
 });
 
@@ -235,8 +234,8 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, async () => {
   console.log(`Server is running on port ${PORT}`);
 
-  cron.schedule("*/10 * * * *", () => {
-    console.log("Esecuzione del job di invio report ogni 10 minuti!");
+  cron.schedule("*/1 * * * *", () => {
+    console.log("Esecuzione del job di invio report ogni 1 minuti!");
     if (Object.keys(groupStats).length > 0) {
       sendReport();
       groupStats = {}; // Clear the object after sending report
