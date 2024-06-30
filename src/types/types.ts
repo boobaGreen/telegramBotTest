@@ -1,8 +1,20 @@
 // types/types.ts
 
 export interface GroupStats {
-  totalMessages: number;
-  totalSizeKB: number;
+  totalMessages: 0;
+  totalSizeKB: 0;
+  textTotalMessages: 0;
+  textTotalSize: 0;
+  photoTotalMessages: 0;
+  photoTotalSize: 0;
+  videoTotalMessages: 0;
+  videoTotalSize: 0;
+  documentTotalMessages: 0;
+  documentTotalSize: 0;
+  pollTotalMessages: 0;
+  pollTotalSize: 0;
+  stickerTotalMessages: 0;
+  stickerTotalSize: 0;
 }
 
 export interface ReportPayload {
@@ -11,6 +23,30 @@ export interface ReportPayload {
   totalSizeKB: number;
   emissionsOneByteMethod: number;
   emissionsSWDMethod: number;
+  textTotalMessages: number;
+  textTotalSize: number;
+  textEmissionsOneByteMethod: number;
+  textEmissionsSWDMethod: number;
+  photoTotalMessages: number;
+  photoTotalSize: number;
+  photoEmissionsOneByteMethod: number;
+  photoEmissionsSWDMethod: number;
+  videoTotalMessages: number;
+  videoTotalSize: number;
+  videoEmissionsOneByteMethod: number;
+  videoEmissionsSWDMethod: number;
+  documentTotalMessages: number;
+  documentTotalSize: number;
+  documentEmissionsOneByteMethod: number;
+  documentEmissionsSWDMethod: number;
+  pollTotalMessages: number;
+  pollTotalSize: number;
+  pollEmissionsOneByteMethod: number;
+  pollEmissionsSWDMethod: number;
+  stickerTotalMessages: number;
+  stickerTotalSize: number;
+  stickerEmissionsOneByteMethod: number;
+  stickerEmissionsSWDMethod: number;
   groupName?: string;
   participantsCount?: number;
   adminNames: string[]; // Aggiunta di adminNames come array di stringhe

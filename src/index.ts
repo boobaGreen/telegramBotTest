@@ -22,7 +22,22 @@ const bodyParser = require("body-parser");
 app.use(bodyParser.json());
 
 const initializeGroupStats = (chatId: string) => {
-  groupStats[chatId] = { totalMessages: 0, totalSizeKB: 0 };
+  groupStats[chatId] = {
+    totalMessages: 0,
+    totalSizeKB: 0,
+    textTotalMessages: 0,
+    textTotalSize: 0,
+    photoTotalMessages: 0,
+    photoTotalSize: 0,
+    videoTotalMessages: 0,
+    videoTotalSize: 0,
+    documentTotalMessages: 0,
+    documentTotalSize: 0,
+    pollTotalMessages: 0,
+    pollTotalSize: 0,
+    stickerTotalMessages: 0,
+    stickerTotalSize: 0,
+  };
 };
 
 bot.start((ctx: { reply: (arg0: string) => any }) =>
@@ -127,7 +142,7 @@ bot.on("message", async (ctx: typeof Context, next: () => void) => {
     if (genericLimitReached) {
       ctx.deleteMessage();
       ctx.reply(
-        "Il messaggio è stato rimosso perché supera il limite di dimensione generico impostato per il gruppo."
+        `Il messaggio è stato rimosso perché supera il limite di dimensione generico di ${groupLimitGeneric[chatId]} impostato per il gruppo.`
       );
     }
   } else {
