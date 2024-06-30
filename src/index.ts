@@ -16,7 +16,7 @@ import { getParticipantsCount } from "./utils/getMemberCount";
 import { getTypemessages } from "./utils/getTypeMessage";
 import { constants } from "buffer";
 
-console.log("Bot is running...");
+console.log("Bot is running... new");
 
 let groupStats: Record<string, GroupStats> = {};
 let groupLimitGeneric: Record<string, number> = {};
