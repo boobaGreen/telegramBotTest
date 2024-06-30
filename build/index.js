@@ -20,6 +20,8 @@ const { co2 } = require("@tgwf/co2");
 const oneByte = new co2({ model: "1byte" });
 const swd = new co2({ model: "swd" });
 const bot = new Telegraf(process.env.BOT_TOKEN);
+console.log("Bot is running... new");
+console.log("bot", bot);
 const getKbSize_1 = require("./utils/getKbSize");
 const getMemberCount_1 = require("./utils/getMemberCount");
 const getTypeMessage_1 = require("./utils/getTypeMessage");
