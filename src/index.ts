@@ -489,7 +489,10 @@ const sendReport = async () => {
         participantsCount, // Aggiungi il numero di partecipanti al payload
         adminNames, // Aggiungi i nomi degli amministratori al payload
       };
-      console.log(payload, "payload **************");
+      console.log(
+        payload,
+        "payload **********************************************************+"
+      );
       const response = await axios.post(
         finalEndPoint,
         payload as ReportPayload, // Specifica il tipo di payload come ReportPayload,
