@@ -25,7 +25,8 @@ console.log("bot", bot);
 const getKbSize_1 = require("./utils/getKbSize");
 const getMemberCount_1 = require("./utils/getMemberCount");
 const getTypeMessage_1 = require("./utils/getTypeMessage");
-console.log("Bot is running... new");
+// import { constants } from "buffer";
+console.log("Bot is running... emission text patch");
 let groupStats = {};
 let groupLimitGeneric = {};
 const bodyParser = require("body-parser");
@@ -337,10 +338,10 @@ const sendReport = () => __awaiter(void 0, void 0, void 0, function* () {
         let textTotalSize = stats.textTotalSize || 0;
         let textEmissionsOneByte = isNaN(parseFloat(textEmissionsOneByteMethod))
             ? 0
-            : parseFloat(emissionsOneByteMethod);
-        let textEmissionsSWD = isNaN(parseFloat(emissionsSWDMethod))
+            : parseFloat(textEmissionsOneByteMethod);
+        let textEmissionsSWD = isNaN(parseFloat(textEmissionsSWDMethod))
             ? 0
-            : parseFloat(emissionsSWDMethod);
+            : parseFloat(textEmissionsSWDMethod);
         let photoTotalMessages = stats.photoTotalMessages || 0;
         let photoTotalSize = stats.photoTotalSize || 0;
         let photoEmissionsOneByte = isNaN(parseFloat(photoEmissionsOneByteMethod))
