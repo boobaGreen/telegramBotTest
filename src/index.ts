@@ -238,8 +238,8 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, async () => {
   console.log(`Server is running on port ${PORT}`);
 
-  cron.schedule("*/10 * * * *", () => {
-    console.log("Esecuzione del job di invio report ogni 10 minuti!");
+  cron.schedule("0 * * * *", () => {
+    console.log("Esecuzione del job di invio report ogni ora!");
     if (Object.keys(groupStats).length > 0) {
       sendReport();
       groupStats = {}; // Clear the object after sending report
