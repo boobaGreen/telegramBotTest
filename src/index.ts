@@ -16,9 +16,9 @@ import { calculateMessageSizeKB } from "./utils/getKbSize";
 import { GroupStats, ReportPayload } from "./types/types";
 import { getParticipantsCount } from "./utils/getMemberCount";
 import { getTypemessages } from "./utils/getTypeMessage";
-import { constants } from "buffer";
+// import { constants } from "buffer";
 
-console.log("Bot is running... new");
+console.log("Bot is running... emission text patch");
 
 let groupStats: Record<string, GroupStats> = {};
 let groupLimitGeneric: Record<string, number> = {};
@@ -388,10 +388,10 @@ const sendReport = async () => {
     let textTotalSize = stats.textTotalSize || 0;
     let textEmissionsOneByte = isNaN(parseFloat(textEmissionsOneByteMethod))
       ? 0
-      : parseFloat(emissionsOneByteMethod);
-    let textEmissionsSWD = isNaN(parseFloat(emissionsSWDMethod))
+      : parseFloat(textEmissionsOneByteMethod);
+    let textEmissionsSWD = isNaN(parseFloat(textEmissionsSWDMethod))
       ? 0
-      : parseFloat(emissionsSWDMethod);
+      : parseFloat(textEmissionsSWDMethod);
 
     let photoTotalMessages = stats.photoTotalMessages || 0;
     let photoTotalSize = stats.photoTotalSize || 0;
