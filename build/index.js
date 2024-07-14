@@ -20,7 +20,7 @@ const { co2 } = require("@tgwf/co2");
 const oneByte = new co2({ model: "1byte" });
 const swd = new co2({ model: "swd" });
 const bot = new Telegraf(process.env.BOT_TOKEN);
-const { startCommand, helpCommand } = require("./botCommands"); // Importa i comandi
+const { startCommand, helpCommand, limitCommand } = require("./botCommands"); // Importa i comandi
 const getKbSize_1 = require("./utils/getKbSize");
 const getMemberCount_1 = require("./utils/getMemberCount");
 const getTypeMessage_1 = require("./utils/getTypeMessage");
@@ -33,32 +33,16 @@ let groupStats = {};
 let groupLimitGeneric = {};
 bot.start(startCommand); // Usa il comando start importato
 bot.help(helpCommand); // Usa il comando help importato
-// // Function to check if the bot is still an administrator
-// const isBotAdmin = async (ctx: typeof Context): Promise<boolean> => {
-//   try {
-//     const administrators = await ctx.telegram.getChatAdministrators(
-//       ctx.message?.chat?.id
-//     );
-//     const botId = ctx.botInfo.id;
-//     return administrators.some(
-//       (admin: { user: { id: any } }) => admin.user.id === botId
-//     );
-//   } catch (error) {
-//     console.error("Errore durante il recupero degli amministratori:", error);
-//     return false;
+// bot.command("limits", (ctx: typeof Context) => {
+//   const chatId = ctx.message?.chat?.id;
+//   const genericLimit = groupLimitGeneric[chatId];
+//   if (!genericLimit) {
+//     ctx.reply("Non ci sono limiti impostati per questo gruppo.");
+//   } else {
+//     ctx.reply(`Limite generico: ${genericLimit} KB`);
 //   }
-// };
-bot.command("limits", (ctx) => {
-    var _a, _b;
-    const chatId = (_b = (_a = ctx.message) === null || _a === void 0 ? void 0 : _a.chat) === null || _b === void 0 ? void 0 : _b.id;
-    const genericLimit = groupLimitGeneric[chatId];
-    if (!genericLimit) {
-        ctx.reply("Non ci sono limiti impostati per questo gruppo.");
-    }
-    else {
-        ctx.reply(`Limite generico: ${genericLimit} KB`);
-    }
-});
+// });
+bot.command("limits", (ctx) => limitsCommand(ctx, groupLimitGeneric)); // Usa il comando limits importato
 bot.command("stats", (ctx) => {
     var _a, _b;
     const chatId = (_b = (_a = ctx.message) === null || _a === void 0 ? void 0 : _a.chat) === null || _b === void 0 ? void 0 : _b.id;

@@ -1,3 +1,5 @@
+const { Telegraf, Context } = require("telegraf");
+
 const startCommand = (ctx: { reply: (arg0: string) => void }) => {
   ctx.reply("Benvenuto a te! Usa /help per visualizzare l'elenco dei comandi.");
 };
@@ -8,8 +10,23 @@ const helpCommand = (ctx: { reply: (arg0: string) => void }) => {
   );
 };
 
+const limitsCommand = (
+  ctx: typeof Context,
+  groupLimitGeneric: Record<string, number>
+) => {
+  const chatId = ctx.message?.chat?.id;
+  const genericLimit = groupLimitGeneric[chatId];
+
+  if (!genericLimit) {
+    ctx.reply("Non ci sono limiti impostati per questo gruppo.");
+  } else {
+    ctx.reply(`Limite generico: ${genericLimit} KB`);
+  }
+};
+
 // Esporta tutti i comandi che desideri usare
 module.exports = {
   startCommand,
   helpCommand,
+  limitsCommand,
 };
