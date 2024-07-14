@@ -140,6 +140,7 @@ bot.on("message", async (ctx: typeof Context, next: () => void) => {
     );
 
     const typeOfMessage = getTypemessages(ctx.message);
+    console.log("typeOfMessage", typeOfMessage);
 
     // Aggiornamento dei contatori
     updateStats(chatId as string, messageSizeKB, typeOfMessage);
@@ -186,6 +187,10 @@ const updateStats = (
     if (typeOfMessage === "document") {
       groupStats[chatId].documentTotalMessages++;
       groupStats[chatId].documentTotalSize += messageSizeKB;
+    }
+    if (typeOfMessage === "audio") {
+      groupStats[chatId].voiceTotalMessages++;
+      groupStats[chatId].voiceTotalSize += messageSizeKB;
     }
     if (typeOfMessage === "poll") {
       groupStats[chatId].pollTotalMessages++;

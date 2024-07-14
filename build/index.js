@@ -119,6 +119,7 @@ bot.on("message", (ctx, next) => __awaiter(void 0, void 0, void 0, function* () 
     if (isAdmin && groupStats[chatId]) {
         const messageSizeKB = parseFloat((0, getKbSize_1.calculateMessageSizeKB)(ctx.message).toString());
         const typeOfMessage = (0, getTypeMessage_1.getTypemessages)(ctx.message);
+        console.log("typeOfMessage", typeOfMessage);
         // Aggiornamento dei contatori
         updateStats(chatId, messageSizeKB, typeOfMessage);
         const genericLimitReached = groupLimitGeneric[chatId] &&
@@ -154,6 +155,10 @@ const updateStats = (chatId, messageSizeKB, typeOfMessage) => {
         if (typeOfMessage === "document") {
             groupStats[chatId].documentTotalMessages++;
             groupStats[chatId].documentTotalSize += messageSizeKB;
+        }
+        if (typeOfMessage === "audio") {
+            groupStats[chatId].voiceTotalMessages++;
+            groupStats[chatId].voiceTotalSize += messageSizeKB;
         }
         if (typeOfMessage === "poll") {
             groupStats[chatId].pollTotalMessages++;
