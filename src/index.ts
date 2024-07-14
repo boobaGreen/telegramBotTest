@@ -14,6 +14,8 @@ import { calculateMessageSizeKB } from "./utils/getKbSize";
 import { GroupStats, ReportPayload } from "./types/types";
 import { getParticipantsCount } from "./utils/getMemberCount";
 import { getTypemessages } from "./utils/getTypeMessage";
+import { initializeGroupStats } from "./utils/statsUtils";
+
 // import { constants } from "buffer";
 const bodyParser = require("body-parser");
 
@@ -22,29 +24,29 @@ app.use(bodyParser.json());
 let groupStats: Record<string, GroupStats> = {};
 let groupLimitGeneric: Record<string, number> = {};
 
-const initializeGroupStats = (
-  chatId: string,
-  groupStats: Record<string, GroupStats>
-) => {
-  groupStats[chatId] = {
-    totalMessages: 0,
-    totalSizeKB: 0,
-    textTotalMessages: 0,
-    textTotalSize: 0,
-    photoTotalMessages: 0,
-    photoTotalSize: 0,
-    videoTotalMessages: 0,
-    videoTotalSize: 0,
-    documentTotalMessages: 0,
-    documentTotalSize: 0,
-    pollTotalMessages: 0,
-    pollTotalSize: 0,
-    stickerTotalMessages: 0,
-    stickerTotalSize: 0,
-    voiceTotalMessages: 0,
-    voiceTotalSize: 0,
-  };
-};
+// const initializeGroupStats = (
+//   chatId: string,
+//   groupStats: Record<string, GroupStats>
+// ) => {
+//   groupStats[chatId] = {
+//     totalMessages: 0,
+//     totalSizeKB: 0,
+//     textTotalMessages: 0,
+//     textTotalSize: 0,
+//     photoTotalMessages: 0,
+//     photoTotalSize: 0,
+//     videoTotalMessages: 0,
+//     videoTotalSize: 0,
+//     documentTotalMessages: 0,
+//     documentTotalSize: 0,
+//     pollTotalMessages: 0,
+//     pollTotalSize: 0,
+//     stickerTotalMessages: 0,
+//     stickerTotalSize: 0,
+//     voiceTotalMessages: 0,
+//     voiceTotalSize: 0,
+//   };
+// };
 
 bot.start((ctx: { reply: (arg0: string) => any }) =>
   ctx.reply("Benvenuto a te! Usa /help per visualizzare l'elenco dei comandi.")
