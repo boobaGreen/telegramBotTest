@@ -3,7 +3,7 @@ export const getTypemessages = (message: any) => {
   if (message.migrate_to_chat_id || message.migrate_from_chat_id) {
     return ""; // Ignora i messaggi di migrazione
   }
-
+  
   // Controlla il tipo di messaggio
   if (message.text) {
     return "text";

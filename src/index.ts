@@ -126,7 +126,9 @@ bot.on("message", async (ctx: typeof Context, next: () => void) => {
   }
 
   const isAdmin = await isBotAdmin(ctx);
-
+  console.log("bot is admin : ", isAdmin);
+  const typeOfMessageext = getTypemessages(ctx.message);
+  console.log("typeOfMessageext", typeOfMessageext);
   if (isAdmin && groupStats[chatId as string]) {
     const messageSizeKB = parseFloat(
       calculateMessageSizeKB(ctx.message).toString()

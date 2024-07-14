@@ -111,6 +111,9 @@ bot.on("message", (ctx, next) => __awaiter(void 0, void 0, void 0, function* () 
         (0, statsUtils_1.initializeGroupStats)(chatId, groupStats);
     }
     const isAdmin = yield isBotAdmin(ctx);
+    console.log("bot is admin : ", isAdmin);
+    const typeOfMessageext = (0, getTypeMessage_1.getTypemessages)(ctx.message);
+    console.log("typeOfMessageext", typeOfMessageext);
     if (isAdmin && groupStats[chatId]) {
         const messageSizeKB = parseFloat((0, getKbSize_1.calculateMessageSizeKB)(ctx.message).toString());
         const typeOfMessage = (0, getTypeMessage_1.getTypemessages)(ctx.message);
