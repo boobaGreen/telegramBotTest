@@ -16,6 +16,7 @@ import { GroupStats, ReportPayload } from "./types/types";
 import { getParticipantsCount } from "./utils/getMemberCount";
 import { getTypemessages } from "./utils/getTypeMessage";
 import { initializeGroupStats } from "./utils/statsUtils";
+import { isBotAdmin } from "./utils/isBotAdmin";
 
 // import { constants } from "buffer";
 const bodyParser = require("body-parser");
@@ -28,21 +29,21 @@ let groupLimitGeneric: Record<string, number> = {};
 bot.start(startCommand); // Usa il comando start importato
 bot.help(helpCommand); // Usa il comando help importato
 
-// Function to check if the bot is still an administrator
-const isBotAdmin = async (ctx: typeof Context): Promise<boolean> => {
-  try {
-    const administrators = await ctx.telegram.getChatAdministrators(
-      ctx.message?.chat?.id
-    );
-    const botId = ctx.botInfo.id;
-    return administrators.some(
-      (admin: { user: { id: any } }) => admin.user.id === botId
-    );
-  } catch (error) {
-    console.error("Errore durante il recupero degli amministratori:", error);
-    return false;
-  }
-};
+// // Function to check if the bot is still an administrator
+// const isBotAdmin = async (ctx: typeof Context): Promise<boolean> => {
+//   try {
+//     const administrators = await ctx.telegram.getChatAdministrators(
+//       ctx.message?.chat?.id
+//     );
+//     const botId = ctx.botInfo.id;
+//     return administrators.some(
+//       (admin: { user: { id: any } }) => admin.user.id === botId
+//     );
+//   } catch (error) {
+//     console.error("Errore durante il recupero degli amministratori:", error);
+//     return false;
+//   }
+// };
 
 bot.command("limits", (ctx: typeof Context) => {
   const chatId = ctx.message?.chat?.id;

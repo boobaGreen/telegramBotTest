@@ -25,6 +25,7 @@ const getKbSize_1 = require("./utils/getKbSize");
 const getMemberCount_1 = require("./utils/getMemberCount");
 const getTypeMessage_1 = require("./utils/getTypeMessage");
 const statsUtils_1 = require("./utils/statsUtils");
+const isBotAdmin_1 = require("./utils/isBotAdmin");
 // import { constants } from "buffer";
 const bodyParser = require("body-parser");
 app.use(bodyParser.json());
@@ -32,19 +33,21 @@ let groupStats = {};
 let groupLimitGeneric = {};
 bot.start(startCommand); // Usa il comando start importato
 bot.help(helpCommand); // Usa il comando help importato
-// Function to check if the bot is still an administrator
-const isBotAdmin = (ctx) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
-    try {
-        const administrators = yield ctx.telegram.getChatAdministrators((_b = (_a = ctx.message) === null || _a === void 0 ? void 0 : _a.chat) === null || _b === void 0 ? void 0 : _b.id);
-        const botId = ctx.botInfo.id;
-        return administrators.some((admin) => admin.user.id === botId);
-    }
-    catch (error) {
-        console.error("Errore durante il recupero degli amministratori:", error);
-        return false;
-    }
-});
+// // Function to check if the bot is still an administrator
+// const isBotAdmin = async (ctx: typeof Context): Promise<boolean> => {
+//   try {
+//     const administrators = await ctx.telegram.getChatAdministrators(
+//       ctx.message?.chat?.id
+//     );
+//     const botId = ctx.botInfo.id;
+//     return administrators.some(
+//       (admin: { user: { id: any } }) => admin.user.id === botId
+//     );
+//   } catch (error) {
+//     console.error("Errore durante il recupero degli amministratori:", error);
+//     return false;
+//   }
+// };
 bot.command("limits", (ctx) => {
     var _a, _b;
     const chatId = (_b = (_a = ctx.message) === null || _a === void 0 ? void 0 : _a.chat) === null || _b === void 0 ? void 0 : _b.id;
@@ -83,13 +86,13 @@ bot.command("get_admins", (ctx) => __awaiter(void 0, void 0, void 0, function* (
 }));
 // Middleware per gestire i messaggi in arrivo
 bot.on("message", (ctx, next) => __awaiter(void 0, void 0, void 0, function* () {
-    var _c, _d, _e, _f;
-    const chatId = (_d = (_c = ctx.message) === null || _c === void 0 ? void 0 : _c.chat) === null || _d === void 0 ? void 0 : _d.id;
-    const chatType = (_f = (_e = ctx.message) === null || _e === void 0 ? void 0 : _e.chat) === null || _f === void 0 ? void 0 : _f.type;
+    var _a, _b, _c, _d;
+    const chatId = (_b = (_a = ctx.message) === null || _a === void 0 ? void 0 : _a.chat) === null || _b === void 0 ? void 0 : _b.id;
+    const chatType = (_d = (_c = ctx.message) === null || _c === void 0 ? void 0 : _c.chat) === null || _d === void 0 ? void 0 : _d.type;
     if (!groupStats[chatId] && chatType === "supergroup") {
         (0, statsUtils_1.initializeGroupStats)(chatId, groupStats);
     }
-    const isAdmin = yield isBotAdmin(ctx);
+    const isAdmin = yield (0, isBotAdmin_1.isBotAdmin)(ctx);
     console.log("bot is admin : ", isAdmin);
     const typeOfMessageext = (0, getTypeMessage_1.getTypemessages)(ctx.message);
     console.log("typeOfMessageext", typeOfMessageext);
