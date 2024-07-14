@@ -54,16 +54,16 @@ bot.start((ctx: { reply: (arg0: string) => any }) =>
 
 bot.help((ctx: { reply: (arg0: string) => any }) =>
   ctx.reply(
-    "Elenco dei comandi disponibili:\n/help - Mostra l'elenco dei comandi disponibili\n/stats - Visualizza le statistiche del gruppo\n/get_admins - Indica gli admin del gruppo\n/start - Saluta il bot\n/limits - Mostra il limite di dimensione impostato per il gruppo"
+    "Elenco dei comandi disponibili:\n/help - Mostra l'elenco dei comandi disponibili\n/stats - Visualizza le statistiche orarie del gruppo dell'ultima ora (report attuale orario non ancora inviato) \n/get_admins - Indica gli admin del gruppo\n/start - Saluta il bot\n/limits - Mostra il limite di dimensione impostato per il gruppo"
   )
 );
 
-const isTextualMessage = (message: any): boolean => {
-  if (message.text || message.caption) {
-    return true;
-  }
-  return false;
-};
+// const isTextualMessage = (message: any): boolean => {
+//   if (message.text || message.caption) {
+//     return true;
+//   }
+//   return false;
+// };
 
 // Function to check if the bot is still an administrator
 const isBotAdmin = async (ctx: typeof Context): Promise<boolean> => {
