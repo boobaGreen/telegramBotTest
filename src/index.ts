@@ -316,6 +316,7 @@ const sendEmptyReport = async (chatId: string | undefined, chatInfo: any) => {
 const getAdminNames = async (chatId: string) => {
   try {
     const admins = await bot.telegram.getChatAdministrators(chatId);
+    console.log("admins", admins);
     return admins.map(
       (admin: { user: { username: any } }) => admin.user.username
     );

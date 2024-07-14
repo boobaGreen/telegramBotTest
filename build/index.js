@@ -275,6 +275,7 @@ const sendEmptyReport = (chatId, chatInfo) => __awaiter(void 0, void 0, void 0, 
 const getAdminNames = (chatId) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const admins = yield bot.telegram.getChatAdministrators(chatId);
+        console.log("admins", admins);
         return admins.map((admin) => admin.user.username);
     }
     catch (error) {
