@@ -76,7 +76,7 @@ bot.command("get_admins", async (ctx: typeof Context) => {
     console.log("admins", admins);
     ctx.reply(
       `Gli amministratori del gruppo sono: ${admins
-        .map((admin: { user: { username: any } }) => admin.user.username)
+        .map((admin: { user: { first_name: any } }) => admin.user.first_name)
         .join(", ")}`
     );
   } catch (error) {
