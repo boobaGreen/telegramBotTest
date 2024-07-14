@@ -28,7 +28,7 @@ const bodyParser = require("body-parser");
 app.use(bodyParser.json());
 let groupStats = {};
 let groupLimitGeneric = {};
-const initializeGroupStats = (chatId) => {
+const initializeGroupStats = (chatId, groupStats) => {
     groupStats[chatId] = {
         totalMessages: 0,
         totalSizeKB: 0,
@@ -104,7 +104,7 @@ bot.on("message", (ctx, next) => __awaiter(void 0, void 0, void 0, function* () 
     const chatId = (_d = (_c = ctx.message) === null || _c === void 0 ? void 0 : _c.chat) === null || _d === void 0 ? void 0 : _d.id;
     const chatType = (_f = (_e = ctx.message) === null || _e === void 0 ? void 0 : _e.chat) === null || _f === void 0 ? void 0 : _f.type;
     if (!groupStats[chatId] && chatType === "supergroup") {
-        initializeGroupStats(chatId);
+        initializeGroupStats(chatId, groupStats);
     }
     const isAdmin = yield isBotAdmin(ctx);
     if (isAdmin && groupStats[chatId]) {

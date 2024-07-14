@@ -6,8 +6,8 @@ exports.initializeGroupStats = void 0;
  * @param chatId - L'ID della chat del gruppo.
  * @returns {GroupStats} - Oggetto con le statistiche inizializzate.
  */
-const initializeGroupStats = (chatId) => {
-    return {
+const initializeGroupStats = (chatId, groupStats) => {
+    groupStats[chatId] = {
         totalMessages: 0,
         totalSizeKB: 0,
         textTotalMessages: 0,

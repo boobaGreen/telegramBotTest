@@ -10,7 +10,6 @@ const oneByte = new co2({ model: "1byte" });
 const swd = new co2({ model: "swd" });
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
-
 import { calculateMessageSizeKB } from "./utils/getKbSize";
 import { GroupStats, ReportPayload } from "./types/types";
 import { getParticipantsCount } from "./utils/getMemberCount";
@@ -23,7 +22,10 @@ app.use(bodyParser.json());
 let groupStats: Record<string, GroupStats> = {};
 let groupLimitGeneric: Record<string, number> = {};
 
-const initializeGroupStats = (chatId: string) => {
+const initializeGroupStats = (
+  chatId: string,
+  groupStats: Record<string, GroupStats>
+) => {
   groupStats[chatId] = {
     totalMessages: 0,
     totalSizeKB: 0,
@@ -118,7 +120,7 @@ bot.on("message", async (ctx: typeof Context, next: () => void) => {
   const chatType = ctx.message?.chat?.type;
 
   if (!groupStats[chatId as string] && chatType === "supergroup") {
-    initializeGroupStats(chatId as string);
+    initializeGroupStats(chatId as string, groupStats);
   }
 
   const isAdmin = await isBotAdmin(ctx);
