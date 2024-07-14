@@ -71,6 +71,7 @@ bot.command("get_admins", (ctx) => __awaiter(void 0, void 0, void 0, function* (
     const chatId = ctx.message.chat.id;
     try {
         const admins = yield ctx.telegram.getChatAdministrators(chatId);
+        console.log("admins", admins);
         ctx.reply(`Gli amministratori del gruppo sono: ${admins
             .map((admin) => admin.user.username)
             .join(", ")}`);
