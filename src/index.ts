@@ -9,6 +9,7 @@ const { co2 } = require("@tgwf/co2");
 const oneByte = new co2({ model: "1byte" });
 const swd = new co2({ model: "swd" });
 const bot = new Telegraf(process.env.BOT_TOKEN);
+const { startCommand, helpCommand } = require("./botCommands"); // Importa i comandi
 
 import { calculateMessageSizeKB } from "./utils/getKbSize";
 import { GroupStats, ReportPayload } from "./types/types";
@@ -24,39 +25,8 @@ app.use(bodyParser.json());
 let groupStats: Record<string, GroupStats> = {};
 let groupLimitGeneric: Record<string, number> = {};
 
-// const initializeGroupStats = (
-//   chatId: string,
-//   groupStats: Record<string, GroupStats>
-// ) => {
-//   groupStats[chatId] = {
-//     totalMessages: 0,
-//     totalSizeKB: 0,
-//     textTotalMessages: 0,
-//     textTotalSize: 0,
-//     photoTotalMessages: 0,
-//     photoTotalSize: 0,
-//     videoTotalMessages: 0,
-//     videoTotalSize: 0,
-//     documentTotalMessages: 0,
-//     documentTotalSize: 0,
-//     pollTotalMessages: 0,
-//     pollTotalSize: 0,
-//     stickerTotalMessages: 0,
-//     stickerTotalSize: 0,
-//     voiceTotalMessages: 0,
-//     voiceTotalSize: 0,
-//   };
-// };
-
-bot.start((ctx: { reply: (arg0: string) => any }) =>
-  ctx.reply("Benvenuto a te! Usa /help per visualizzare l'elenco dei comandi.")
-);
-
-bot.help((ctx: { reply: (arg0: string) => any }) =>
-  ctx.reply(
-    "Elenco dei comandi disponibili:\n/help - Mostra l'elenco dei comandi disponibili\n/stats - Visualizza le statistiche orarie del gruppo dell'ultima ora (report attuale orario non ancora inviato) \n/get_admins - Indica gli admin del gruppo\n/start - Saluta il bot\n/limits - Mostra il limite di dimensione impostato per il gruppo"
-  )
-);
+bot.start(startCommand); // Usa il comando start importato
+bot.help(helpCommand); // Usa il comando help importato
 
 // Function to check if the bot is still an administrator
 const isBotAdmin = async (ctx: typeof Context): Promise<boolean> => {
