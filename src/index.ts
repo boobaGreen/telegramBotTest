@@ -97,7 +97,7 @@ bot.command("stats", (ctx: typeof Context) => {
   if (chatId && groupStats[chatId]) {
     const stats = groupStats[chatId];
     ctx.reply(
-      `Statistiche del gruppo - ultimo frame:\nMessaggi totali: ${
+      `Statistiche del gruppo - ultima ora (non ancora spediti al db):\nMessaggi totali: ${
         stats.totalMessages
       }\nDimensione totale: ${stats.totalSizeKB.toFixed(3)} KB`
     );

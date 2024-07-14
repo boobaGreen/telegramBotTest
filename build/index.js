@@ -88,7 +88,7 @@ bot.command("stats", (ctx) => {
     const chatId = (_b = (_a = ctx.message) === null || _a === void 0 ? void 0 : _a.chat) === null || _b === void 0 ? void 0 : _b.id;
     if (chatId && groupStats[chatId]) {
         const stats = groupStats[chatId];
-        ctx.reply(`Statistiche del gruppo - ultimo frame:\nMessaggi totali: ${stats.totalMessages}\nDimensione totale: ${stats.totalSizeKB.toFixed(3)} KB`);
+        ctx.reply(`Statistiche del gruppo - ultima ora (non ancora spediti al db):\nMessaggi totali: ${stats.totalMessages}\nDimensione totale: ${stats.totalSizeKB.toFixed(3)} KB`);
     }
     else {
         ctx.reply("Non ci sono statistiche disponibili per questo gruppo.");
