@@ -6,7 +6,7 @@ const startCommand = (ctx) => {
 const helpCommand = (ctx) => {
     ctx.reply("Elenco dei comandi disponibili:\n/help - Mostra l'elenco dei comandi disponibili\n/stats - Visualizza le statistiche orarie del gruppo dell'ultima ora (report attuale orario non ancora inviato) \n/get_admins - Indica gli admin del gruppo\n/start - Saluta il bot\n/limits - Mostra il limite di dimensione impostato per il gruppo");
 };
-const limitsCommand = (ctx, groupLimitGeneric) => {
+const limitCommand = (ctx, groupLimitGeneric) => {
     var _a, _b;
     const chatId = (_b = (_a = ctx.message) === null || _a === void 0 ? void 0 : _a.chat) === null || _b === void 0 ? void 0 : _b.id;
     const genericLimit = groupLimitGeneric[chatId];
@@ -21,5 +21,5 @@ const limitsCommand = (ctx, groupLimitGeneric) => {
 module.exports = {
     startCommand,
     helpCommand,
-    limitsCommand,
+    limitCommand,
 };

@@ -40,7 +40,7 @@ bot.help(helpCommand); // Usa il comando help importato
 //   }
 // });
 
-bot.command("limits", (ctx: any) => limitsCommand(ctx, groupLimitGeneric)); // Usa il comando limits importato
+bot.command("limits", (ctx: any) => limitCommand(ctx, groupLimitGeneric)); // Usa il comando limits importato
 
 bot.command("stats", (ctx: typeof Context) => {
   const chatId = ctx.message?.chat?.id;

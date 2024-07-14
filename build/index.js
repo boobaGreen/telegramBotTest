@@ -42,7 +42,7 @@ bot.help(helpCommand); // Usa il comando help importato
 //     ctx.reply(`Limite generico: ${genericLimit} KB`);
 //   }
 // });
-bot.command("limits", (ctx) => limitsCommand(ctx, groupLimitGeneric)); // Usa il comando limits importato
+bot.command("limits", (ctx) => limitCommand(ctx, groupLimitGeneric)); // Usa il comando limits importato
 bot.command("stats", (ctx) => {
     var _a, _b;
     const chatId = (_b = (_a = ctx.message) === null || _a === void 0 ? void 0 : _a.chat) === null || _b === void 0 ? void 0 : _b.id;

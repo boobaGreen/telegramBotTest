@@ -10,7 +10,7 @@ const helpCommand = (ctx: { reply: (arg0: string) => void }) => {
   );
 };
 
-const limitsCommand = (
+const limitCommand = (
   ctx: typeof Context,
   groupLimitGeneric: Record<string, number>
 ) => {
@@ -28,5 +28,5 @@ const limitsCommand = (
 module.exports = {
   startCommand,
   helpCommand,
-  limitsCommand,
+  limitCommand,
 };
