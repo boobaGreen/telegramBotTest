@@ -20,17 +20,14 @@ const { co2 } = require("@tgwf/co2");
 const oneByte = new co2({ model: "1byte" });
 const swd = new co2({ model: "swd" });
 const bot = new Telegraf(process.env.BOT_TOKEN);
-console.log("Bot is running... new");
-console.log("bot", bot);
 const getKbSize_1 = require("./utils/getKbSize");
 const getMemberCount_1 = require("./utils/getMemberCount");
 const getTypeMessage_1 = require("./utils/getTypeMessage");
 // import { constants } from "buffer";
-console.log("Bot is running... emission text patch");
-let groupStats = {};
-let groupLimitGeneric = {};
 const bodyParser = require("body-parser");
 app.use(bodyParser.json());
+let groupStats = {};
+let groupLimitGeneric = {};
 const initializeGroupStats = (chatId) => {
     groupStats[chatId] = {
         totalMessages: 0,
@@ -53,12 +50,6 @@ const initializeGroupStats = (chatId) => {
 };
 bot.start((ctx) => ctx.reply("Benvenuto a te! Usa /help per visualizzare l'elenco dei comandi."));
 bot.help((ctx) => ctx.reply("Elenco dei comandi disponibili:\n/help - Mostra l'elenco dei comandi disponibili\n/stats - Visualizza le statistiche orarie del gruppo dell'ultima ora (report attuale orario non ancora inviato) \n/get_admins - Indica gli admin del gruppo\n/start - Saluta il bot\n/limits - Mostra il limite di dimensione impostato per il gruppo"));
-// const isTextualMessage = (message: any): boolean => {
-//   if (message.text || message.caption) {
-//     return true;
-//   }
-//   return false;
-// };
 // Function to check if the bot is still an administrator
 const isBotAdmin = (ctx) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;

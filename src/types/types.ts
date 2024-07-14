@@ -1,22 +1,22 @@
 // types/types.ts
 
 export interface GroupStats {
-  totalMessages: 0;
-  totalSizeKB: 0;
-  textTotalMessages: 0;
-  textTotalSize: 0;
-  photoTotalMessages: 0;
-  photoTotalSize: 0;
-  videoTotalMessages: 0;
-  videoTotalSize: 0;
-  voiceTotalMessages: 0;
-  voiceTotalSize: 0;
-  documentTotalMessages: 0;
-  documentTotalSize: 0;
-  pollTotalMessages: 0;
-  pollTotalSize: 0;
-  stickerTotalMessages: 0;
-  stickerTotalSize: 0;
+  totalMessages: number;
+  totalSizeKB: number;
+  textTotalMessages: number;
+  textTotalSize: number;
+  photoTotalMessages: number;
+  photoTotalSize: number;
+  videoTotalMessages: number;
+  videoTotalSize: number;
+  voiceTotalMessages: number;
+  voiceTotalSize: number;
+  documentTotalMessages: number;
+  documentTotalSize: number;
+  pollTotalMessages: number;
+  pollTotalSize: number;
+  stickerTotalMessages: number;
+  stickerTotalSize: number;
 }
 
 export interface ReportPayload {
