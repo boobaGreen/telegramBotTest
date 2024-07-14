@@ -166,8 +166,8 @@ app.delete("/groupLimitGeneric/:chatId", (req, res) => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`Server is running on port ${PORT}`);
-    cron.schedule("0 * * * *", () => {
-        console.log("Esecuzione del job di invio report ogni ora!");
+    cron.schedule("*/5 * * * *", () => {
+        console.log("Esecuzione del job di invio report ogni 5 minuti!");
         if (Object.keys(groupStats).length > 0) {
             sendReport();
             groupStats = {}; // Clear the object after sending report
@@ -225,7 +225,7 @@ const sendEmptyReport = (chatId, chatInfo) => __awaiter(void 0, void 0, void 0, 
             stickerEmissionsSWDMethod: 0,
             groupName: chatInfo.title,
             participantsCount: chatInfo.membersCount,
-            adminNames: [], // Campi adminNames vuoti nel report vuoto
+            adminIds: [], // Campi adminNames vuoti nel report vuoto
         };
         const response = yield axios.post(finalEndPoint, payload, {
             headers: {
@@ -238,11 +238,11 @@ const sendEmptyReport = (chatId, chatInfo) => __awaiter(void 0, void 0, void 0, 
         console.log("Errore durante l'invio del report vuoto:", error);
     }
 });
-const getAdminNames = (chatId) => __awaiter(void 0, void 0, void 0, function* () {
+const getAdminIds = (chatId) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const admins = yield bot.telegram.getChatAdministrators(chatId);
         console.log("admins", admins);
-        return admins.map((admin) => admin.user.username);
+        return admins.map((admin) => admin.user.id);
     }
     catch (error) {
         console.error("Errore durante il recupero degli amministratori:", error);
@@ -293,8 +293,8 @@ const sendReport = () => __awaiter(void 0, void 0, void 0, function* () {
         // Ottieni il numero di partecipanti del gruppo
         const participantsCount = yield (0, getMemberCount_1.getParticipantsCount)(chatId);
         // Ottieni i nomi degli amministratori del gruppo
-        const adminNames = yield getAdminNames(chatId);
-        console.log(adminNames, "adminNames ********************");
+        const adminIds = yield getAdminIds(chatId);
+        console.log(adminIds, "adminIds ********************");
         // Verifica se ci sono stati messaggi nel lasso di tempo del report
         let totalMessages = stats.totalMessages || 0;
         let totalSizeKB = stats.totalSizeKB || 0;
@@ -398,7 +398,7 @@ const sendReport = () => __awaiter(void 0, void 0, void 0, function* () {
                 stickerEmissionsSWDMethod: stickerEmissionsSWD,
                 groupName: chatInfo.title,
                 participantsCount, // Aggiungi il numero di partecipanti al payload
-                adminNames, // Aggiungi i nomi degli amministratori al payload
+                adminIds, // Aggiungi i nomi degli amministratori al payload
             };
             console.log(payload, "payload **********************************************************+");
             const response = yield axios.post(finalEndPoint, payload, // Specifica il tipo di payload come ReportPayload,

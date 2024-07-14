@@ -196,8 +196,8 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, async () => {
   console.log(`Server is running on port ${PORT}`);
 
-  cron.schedule("0 * * * *", () => {
-    console.log("Esecuzione del job di invio report ogni ora!");
+  cron.schedule("*/5 * * * *", () => {
+    console.log("Esecuzione del job di invio report ogni 5 minuti!");
     if (Object.keys(groupStats).length > 0) {
       sendReport();
       groupStats = {}; // Clear the object after sending report
@@ -257,7 +257,7 @@ const sendEmptyReport = async (chatId: string | undefined, chatInfo: any) => {
       stickerEmissionsSWDMethod: 0,
       groupName: chatInfo.title,
       participantsCount: chatInfo.membersCount,
-      adminNames: [], // Campi adminNames vuoti nel report vuoto
+      adminIds: [], // Campi adminNames vuoti nel report vuoto
     };
 
     const response = await axios.post(finalEndPoint, payload as ReportPayload, {
@@ -271,13 +271,11 @@ const sendEmptyReport = async (chatId: string | undefined, chatInfo: any) => {
   }
 };
 
-const getAdminNames = async (chatId: string) => {
+const getAdminIds = async (chatId: string) => {
   try {
     const admins = await bot.telegram.getChatAdministrators(chatId);
     console.log("admins", admins);
-    return admins.map(
-      (admin: { user: { username: any } }) => admin.user.username
-    );
+    return admins.map((admin: { user: { id: number } }) => admin.user.id);
   } catch (error) {
     console.error("Errore durante il recupero degli amministratori:", error);
     return [];
@@ -330,8 +328,8 @@ const sendReport = async () => {
     const participantsCount = await getParticipantsCount(chatId);
 
     // Ottieni i nomi degli amministratori del gruppo
-    const adminNames = await getAdminNames(chatId);
-    console.log(adminNames, "adminNames ********************");
+    const adminIds = await getAdminIds(chatId);
+    console.log(adminIds, "adminIds ********************");
 
     // Verifica se ci sono stati messaggi nel lasso di tempo del report
     let totalMessages = stats.totalMessages || 0;
@@ -449,7 +447,7 @@ const sendReport = async () => {
         stickerEmissionsSWDMethod: stickerEmissionsSWD,
         groupName: chatInfo.title,
         participantsCount, // Aggiungi il numero di partecipanti al payload
-        adminNames, // Aggiungi i nomi degli amministratori al payload
+        adminIds, // Aggiungi i nomi degli amministratori al payload
       };
       console.log(
         payload,

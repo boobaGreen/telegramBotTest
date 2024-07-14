@@ -55,5 +55,5 @@ export interface ReportPayload {
   stickerEmissionsSWDMethod: number;
   groupName?: string;
   participantsCount?: number;
-  adminNames: string[]; // Aggiunta di adminNames come array di stringhe
+  adminIds: number[]; // Aggiunta di adminIds come array di numbers
 }
