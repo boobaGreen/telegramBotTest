@@ -117,6 +117,14 @@ const updateStats = (
     if (typeOfMessage === "text") {
       groupStats[chatId].textTotalMessages++;
       groupStats[chatId].textTotalSize += messageSizeKB;
+      console.log(
+        "groupStats[chatId].textTotalMessages",
+        groupStats[chatId].textTotalMessages
+      );
+      console.log(
+        "groupStats[chatId].textTotalSize",
+        groupStats[chatId].textTotalSize
+      );
     }
     if (typeOfMessage === "photo") {
       groupStats[chatId].photoTotalMessages++;

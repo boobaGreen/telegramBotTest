@@ -33,15 +33,6 @@ let groupStats = {};
 let groupLimitGeneric = {};
 bot.start(startCommand); // Usa il comando start importato
 bot.help(helpCommand); // Usa il comando help importato
-// bot.command("limits", (ctx: typeof Context) => {
-//   const chatId = ctx.message?.chat?.id;
-//   const genericLimit = groupLimitGeneric[chatId];
-//   if (!genericLimit) {
-//     ctx.reply("Non ci sono limiti impostati per questo gruppo.");
-//   } else {
-//     ctx.reply(`Limite generico: ${genericLimit} KB`);
-//   }
-// });
 bot.command("limits", (ctx) => limitCommand(ctx, groupLimitGeneric)); // Usa il comando limits importato
 bot.command("stats", (ctx) => {
     var _a, _b;
@@ -107,6 +98,8 @@ const updateStats = (chatId, messageSizeKB, typeOfMessage) => {
         if (typeOfMessage === "text") {
             groupStats[chatId].textTotalMessages++;
             groupStats[chatId].textTotalSize += messageSizeKB;
+            console.log("groupStats[chatId].textTotalMessages", groupStats[chatId].textTotalMessages);
+            console.log("groupStats[chatId].textTotalSize", groupStats[chatId].textTotalSize);
         }
         if (typeOfMessage === "photo") {
             groupStats[chatId].photoTotalMessages++;
@@ -120,9 +113,11 @@ const updateStats = (chatId, messageSizeKB, typeOfMessage) => {
             groupStats[chatId].documentTotalMessages++;
             groupStats[chatId].documentTotalSize += messageSizeKB;
         }
-        if (typeOfMessage === "audio") {
+        if (typeOfMessage === "voice") {
             groupStats[chatId].voiceTotalMessages++;
             groupStats[chatId].voiceTotalSize += messageSizeKB;
+            console.log("voiceTotalMessages", groupStats[chatId].voiceTotalMessages);
+            console.log("voiceTotalSize", groupStats[chatId].voiceTotalSize);
         }
         if (typeOfMessage === "poll") {
             groupStats[chatId].pollTotalMessages++;
