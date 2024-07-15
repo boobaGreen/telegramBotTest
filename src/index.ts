@@ -13,7 +13,6 @@ const { co2 } = require("@tgwf/co2");
 import groupLimitRoutes from "./routes/groupLimitRoutes";
 import { calculateMessageSizeKB } from "./utils/getKbSize";
 import { GroupStats } from "./types/types";
-
 import { getTypemessages } from "./utils/getTypeMessage";
 import { initializeGroupStats } from "./utils/statsUtils";
 import { isBotAdmin } from "./utils/isBotAdmin";
@@ -86,7 +85,7 @@ app.use(groupLimitRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, async () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`Server is running on port ${PORT} 2`);
 
   cron.schedule("*/5 * * * *", async () => {
     console.log("Esecuzione del job di invio report ogni 5 minuti !");
