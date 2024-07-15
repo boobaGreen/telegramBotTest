@@ -26,6 +26,7 @@ const getMemberCount_1 = require("./utils/getMemberCount");
 const getTypeMessage_1 = require("./utils/getTypeMessage");
 const statsUtils_1 = require("./utils/statsUtils");
 const isBotAdmin_1 = require("./utils/isBotAdmin");
+const updateStats_1 = require("./utils/updateStats");
 // import { constants } from "buffer";
 const bodyParser = require("body-parser");
 app.use(bodyParser.json());
@@ -71,7 +72,7 @@ bot.on("message", (ctx, next) => __awaiter(void 0, void 0, void 0, function* () 
         const messageSizeKB = parseFloat((0, getKbSize_1.calculateMessageSizeKB)(ctx.message).toString());
         const typeOfMessage = (0, getTypeMessage_1.getTypemessages)(ctx.message);
         // Aggiornamento dei contatori
-        updateStats(chatId, messageSizeKB, typeOfMessage);
+        (0, updateStats_1.updateStats)(chatId, messageSizeKB, typeOfMessage, groupStats);
         const genericLimitReached = groupLimitGeneric[chatId] &&
             messageSizeKB > groupLimitGeneric[chatId];
         // Check if generic limit is reached and delete message if necessary
@@ -85,48 +86,6 @@ bot.on("message", (ctx, next) => __awaiter(void 0, void 0, void 0, function* () 
     }
     next();
 }));
-// Funzione per aggiornare i contatori totalMessages e totalSizeKB
-const updateStats = (chatId, messageSizeKB, typeOfMessage) => {
-    if (groupStats[chatId]) {
-        // Aggiorna i contatori generali
-        groupStats[chatId].totalMessages++;
-        groupStats[chatId].totalSizeKB += messageSizeKB;
-        // Usa uno switch per gestire i diversi tipi di messaggi
-        switch (typeOfMessage) {
-            case "text":
-                groupStats[chatId].textTotalMessages++;
-                groupStats[chatId].textTotalSize += messageSizeKB;
-                break;
-            case "photo":
-                groupStats[chatId].photoTotalMessages++;
-                groupStats[chatId].photoTotalSize += messageSizeKB;
-                break;
-            case "video":
-                groupStats[chatId].videoTotalMessages++;
-                groupStats[chatId].videoTotalSize += messageSizeKB;
-                break;
-            case "document":
-                groupStats[chatId].documentTotalMessages++;
-                groupStats[chatId].documentTotalSize += messageSizeKB;
-                break;
-            case "voice":
-                groupStats[chatId].voiceTotalMessages++;
-                groupStats[chatId].voiceTotalSize += messageSizeKB;
-                break;
-            case "poll":
-                groupStats[chatId].pollTotalMessages++;
-                groupStats[chatId].pollTotalSize += messageSizeKB;
-                break;
-            case "sticker":
-                groupStats[chatId].stickerTotalMessages++;
-                groupStats[chatId].stickerTotalSize += messageSizeKB;
-                break;
-            default:
-                console.warn(`Tipo di messaggio sconosciuto: ${typeOfMessage}`);
-                break;
-        }
-    }
-};
 bot.launch();
 app.get("/test", (_req, res) => {
     console.log("test endpoint hit! wsb81");
