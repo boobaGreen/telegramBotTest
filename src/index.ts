@@ -74,8 +74,6 @@ bot.on("message", async (ctx: typeof Context, next: () => void) => {
 
   const isAdmin = await isBotAdmin(ctx);
 
-  const typeOfMessageext = getTypemessages(ctx.message);
-
   if (isAdmin && groupStats[chatId as string]) {
     const messageSizeKB = parseFloat(
       calculateMessageSizeKB(ctx.message).toString()
@@ -111,35 +109,43 @@ const updateStats = (
   typeOfMessage: string
 ) => {
   if (groupStats[chatId]) {
+    // Aggiorna i contatori generali
     groupStats[chatId].totalMessages++;
     groupStats[chatId].totalSizeKB += messageSizeKB;
-    if (typeOfMessage === "text") {
-      groupStats[chatId].textTotalMessages++;
-      groupStats[chatId].textTotalSize += messageSizeKB;
-    }
-    if (typeOfMessage === "photo") {
-      groupStats[chatId].photoTotalMessages++;
-      groupStats[chatId].photoTotalSize += messageSizeKB;
-    }
-    if (typeOfMessage === "video") {
-      groupStats[chatId].videoTotalMessages++;
-      groupStats[chatId].videoTotalSize += messageSizeKB;
-    }
-    if (typeOfMessage === "document") {
-      groupStats[chatId].documentTotalMessages++;
-      groupStats[chatId].documentTotalSize += messageSizeKB;
-    }
-    if (typeOfMessage === "voice") {
-      groupStats[chatId].voiceTotalMessages++;
-      groupStats[chatId].voiceTotalSize += messageSizeKB;
-    }
-    if (typeOfMessage === "poll") {
-      groupStats[chatId].pollTotalMessages++;
-      groupStats[chatId].pollTotalSize += messageSizeKB;
-    }
-    if (typeOfMessage === "sticker") {
-      groupStats[chatId].stickerTotalMessages++;
-      groupStats[chatId].stickerTotalSize += messageSizeKB;
+
+    // Usa uno switch per gestire i diversi tipi di messaggi
+    switch (typeOfMessage) {
+      case "text":
+        groupStats[chatId].textTotalMessages++;
+        groupStats[chatId].textTotalSize += messageSizeKB;
+        break;
+      case "photo":
+        groupStats[chatId].photoTotalMessages++;
+        groupStats[chatId].photoTotalSize += messageSizeKB;
+        break;
+      case "video":
+        groupStats[chatId].videoTotalMessages++;
+        groupStats[chatId].videoTotalSize += messageSizeKB;
+        break;
+      case "document":
+        groupStats[chatId].documentTotalMessages++;
+        groupStats[chatId].documentTotalSize += messageSizeKB;
+        break;
+      case "voice":
+        groupStats[chatId].voiceTotalMessages++;
+        groupStats[chatId].voiceTotalSize += messageSizeKB;
+        break;
+      case "poll":
+        groupStats[chatId].pollTotalMessages++;
+        groupStats[chatId].pollTotalSize += messageSizeKB;
+        break;
+      case "sticker":
+        groupStats[chatId].stickerTotalMessages++;
+        groupStats[chatId].stickerTotalSize += messageSizeKB;
+        break;
+      default:
+        console.warn(`Tipo di messaggio sconosciuto: ${typeOfMessage}`);
+        break;
     }
   }
 };
