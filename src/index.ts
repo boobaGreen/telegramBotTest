@@ -133,6 +133,8 @@ const updateStats = (
     if (typeOfMessage === "voice") {
       groupStats[chatId].voiceTotalMessages++;
       groupStats[chatId].voiceTotalSize += messageSizeKB;
+      console.log("voiceTotalMessages", groupStats[chatId].voiceTotalMessages);
+      console.log("voiceTotalSize", groupStats[chatId].voiceTotalSize);
     }
     if (typeOfMessage === "poll") {
       groupStats[chatId].pollTotalMessages++;
