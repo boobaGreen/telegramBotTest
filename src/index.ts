@@ -49,7 +49,7 @@ bot.command("get_admins", async (ctx: typeof Context) => {
   const chatId = ctx.message.chat.id;
   try {
     const admins = await ctx.telegram.getChatAdministrators(chatId);
-    console.log("admins", admins);
+
     ctx.reply(
       `Gli amministratori del gruppo sono: ${admins
         .map((admin: { user: { first_name: any } }) => admin.user.first_name)
@@ -73,16 +73,15 @@ bot.on("message", async (ctx: typeof Context, next: () => void) => {
   }
 
   const isAdmin = await isBotAdmin(ctx);
-  console.log("bot is admin : ", isAdmin);
+
   const typeOfMessageext = getTypemessages(ctx.message);
-  console.log("typeOfMessageext", typeOfMessageext);
+
   if (isAdmin && groupStats[chatId as string]) {
     const messageSizeKB = parseFloat(
       calculateMessageSizeKB(ctx.message).toString()
     );
 
     const typeOfMessage = getTypemessages(ctx.message);
-    console.log("typeOfMessage", typeOfMessage);
 
     // Aggiornamento dei contatori
     updateStats(chatId as string, messageSizeKB, typeOfMessage);
@@ -186,7 +185,7 @@ app.listen(PORT, async () => {
   console.log(`Server is running on port ${PORT}`);
 
   cron.schedule("0 * * * *", () => {
-    console.log("Esecuzione del job di invio report ogni 5 minuti!");
+    console.log("Esecuzione del job di invio report ogni 60 minuti!");
     if (Object.keys(groupStats).length > 0) {
       sendReport();
       groupStats = {}; // Clear the object after sending report
@@ -200,7 +199,7 @@ let endPoint = "http://localhost:3005";
 if (process.env.ENVIRONMENT === "production") {
   endPoint = process.env.REPORT_ENDPOINT || "";
 }
-console.log("Endpoint:", endPoint);
+
 const finalEndPoint = endPoint + "/api/v1/reports";
 
 const sendEmptyReport = async (chatId: string | undefined, chatInfo: any) => {
@@ -263,7 +262,7 @@ const sendEmptyReport = async (chatId: string | undefined, chatInfo: any) => {
 const getAdminIds = async (chatId: string) => {
   try {
     const admins = await bot.telegram.getChatAdministrators(chatId);
-    console.log("admins", admins);
+
     return admins.map((admin: { user: { id: number } }) => admin.user.id);
   } catch (error) {
     console.error("Errore durante il recupero degli amministratori:", error);
@@ -318,7 +317,6 @@ const sendReport = async () => {
 
     // Ottieni i nomi degli amministratori del gruppo
     const adminIds = await getAdminIds(chatId);
-    console.log(adminIds, "adminIds ********************");
 
     // Verifica se ci sono stati messaggi nel lasso di tempo del report
     let totalMessages = stats.totalMessages || 0;
@@ -438,10 +436,7 @@ const sendReport = async () => {
         participantsCount, // Aggiungi il numero di partecipanti al payload
         adminIds, // Aggiungi i nomi degli amministratori al payload
       };
-      console.log(
-        payload,
-        "payload **********************************************************+"
-      );
+
       const response = await axios.post(
         finalEndPoint,
         payload as ReportPayload, // Specifica il tipo di payload come ReportPayload,

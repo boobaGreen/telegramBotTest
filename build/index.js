@@ -49,7 +49,6 @@ bot.command("get_admins", (ctx) => __awaiter(void 0, void 0, void 0, function* (
     const chatId = ctx.message.chat.id;
     try {
         const admins = yield ctx.telegram.getChatAdministrators(chatId);
-        console.log("admins", admins);
         ctx.reply(`Gli amministratori del gruppo sono: ${admins
             .map((admin) => admin.user.first_name)
             .join(", ")}`);
@@ -68,13 +67,10 @@ bot.on("message", (ctx, next) => __awaiter(void 0, void 0, void 0, function* () 
         (0, statsUtils_1.initializeGroupStats)(chatId, groupStats);
     }
     const isAdmin = yield (0, isBotAdmin_1.isBotAdmin)(ctx);
-    console.log("bot is admin : ", isAdmin);
     const typeOfMessageext = (0, getTypeMessage_1.getTypemessages)(ctx.message);
-    console.log("typeOfMessageext", typeOfMessageext);
     if (isAdmin && groupStats[chatId]) {
         const messageSizeKB = parseFloat((0, getKbSize_1.calculateMessageSizeKB)(ctx.message).toString());
         const typeOfMessage = (0, getTypeMessage_1.getTypemessages)(ctx.message);
-        console.log("typeOfMessage", typeOfMessage);
         // Aggiornamento dei contatori
         updateStats(chatId, messageSizeKB, typeOfMessage);
         const genericLimitReached = groupLimitGeneric[chatId] &&
@@ -158,7 +154,7 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`Server is running on port ${PORT}`);
     cron.schedule("0 * * * *", () => {
-        console.log("Esecuzione del job di invio report ogni 5 minuti!");
+        console.log("Esecuzione del job di invio report ogni 60 minuti!");
         if (Object.keys(groupStats).length > 0) {
             sendReport();
             groupStats = {}; // Clear the object after sending report
@@ -172,7 +168,6 @@ let endPoint = "http://localhost:3005";
 if (process.env.ENVIRONMENT === "production") {
     endPoint = process.env.REPORT_ENDPOINT || "";
 }
-console.log("Endpoint:", endPoint);
 const finalEndPoint = endPoint + "/api/v1/reports";
 const sendEmptyReport = (chatId, chatInfo) => __awaiter(void 0, void 0, void 0, function* () {
     if (!chatId) {
@@ -232,7 +227,6 @@ const sendEmptyReport = (chatId, chatInfo) => __awaiter(void 0, void 0, void 0, 
 const getAdminIds = (chatId) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const admins = yield bot.telegram.getChatAdministrators(chatId);
-        console.log("admins", admins);
         return admins.map((admin) => admin.user.id);
     }
     catch (error) {
@@ -285,7 +279,6 @@ const sendReport = () => __awaiter(void 0, void 0, void 0, function* () {
         const participantsCount = yield (0, getMemberCount_1.getParticipantsCount)(chatId);
         // Ottieni i nomi degli amministratori del gruppo
         const adminIds = yield getAdminIds(chatId);
-        console.log(adminIds, "adminIds ********************");
         // Verifica se ci sono stati messaggi nel lasso di tempo del report
         let totalMessages = stats.totalMessages || 0;
         let totalSizeKB = stats.totalSizeKB || 0;
@@ -391,7 +384,6 @@ const sendReport = () => __awaiter(void 0, void 0, void 0, function* () {
                 participantsCount, // Aggiungi il numero di partecipanti al payload
                 adminIds, // Aggiungi i nomi degli amministratori al payload
             };
-            console.log(payload, "payload **********************************************************+");
             const response = yield axios.post(finalEndPoint, payload, // Specifica il tipo di payload come ReportPayload,
             {
                 headers: {
