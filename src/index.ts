@@ -9,7 +9,6 @@ const cron = require("node-cron");
 
 const { Telegraf, Context } = require("telegraf");
 const { co2 } = require("@tgwf/co2");
-const { startCommand, helpCommand, limitCommand } = require("./botCommands"); // Importa i comandi
 
 import groupLimitRoutes from "./routes/groupLimitRoutes";
 import { calculateMessageSizeKB } from "./utils/getKbSize";
@@ -21,6 +20,13 @@ import { isBotAdmin } from "./utils/isBotAdmin";
 import { updateStats } from "./utils/updateStats";
 import { sendEmptyReport, sendReport } from "./utils/reportUtils"; // Importa le nuove funzioni
 import { getAdminIds } from "./utils/getAdminsIds";
+import {
+  startCommand,
+  helpCommand,
+  limitCommand,
+  statsCommand,
+  getAdminsCommand,
+} from "./botCommands"; // Importa i comandi
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
@@ -33,40 +39,9 @@ let groupLimitGeneric: Record<string, number> = {};
 
 bot.start(startCommand);
 bot.help(helpCommand);
-
 bot.command("limits", (ctx: any) => limitCommand(ctx, groupLimitGeneric));
-
-bot.command("stats", (ctx: typeof Context) => {
-  const chatId = ctx.message?.chat?.id;
-  if (chatId && groupStats[chatId]) {
-    const stats = groupStats[chatId];
-    ctx.reply(
-      `Statistiche del gruppo - ultima ora (non ancora spediti al db):\nMessaggi totali: ${
-        stats.totalMessages
-      }\nDimensione totale: ${stats.totalSizeKB.toFixed(3)} KB`
-    );
-  } else {
-    ctx.reply("Non ci sono statistiche disponibili per questo gruppo.");
-  }
-});
-
-bot.command("get_admins", async (ctx: typeof Context) => {
-  const chatId = ctx.message.chat.id;
-  try {
-    const admins = await ctx.telegram.getChatAdministrators(chatId);
-
-    ctx.reply(
-      `Gli amministratori del gruppo sono: ${admins
-        .map((admin: { user: { first_name: any } }) => admin.user.first_name)
-        .join(", ")}`
-    );
-  } catch (error) {
-    console.error("Errore durante il recupero degli amministratori:", error);
-    ctx.reply(
-      "Si è verificato un errore durante il recupero degli amministratori."
-    );
-  }
-});
+bot.command("stats", (ctx: any) => statsCommand(ctx, groupStats));
+bot.command("get_admins", getAdminsCommand);
 
 bot.on("message", async (ctx: typeof Context, next: () => void) => {
   const chatId = ctx.message?.chat?.id;

@@ -20,7 +20,6 @@ const app = express();
 const cron = require("node-cron");
 const { Telegraf, Context } = require("telegraf");
 const { co2 } = require("@tgwf/co2");
-const { startCommand, helpCommand, limitCommand } = require("./botCommands"); // Importa i comandi
 const groupLimitRoutes_1 = __importDefault(require("./routes/groupLimitRoutes"));
 const getKbSize_1 = require("./utils/getKbSize");
 const getTypeMessage_1 = require("./utils/getTypeMessage");
@@ -29,38 +28,17 @@ const isBotAdmin_1 = require("./utils/isBotAdmin");
 const updateStats_1 = require("./utils/updateStats");
 const reportUtils_1 = require("./utils/reportUtils"); // Importa le nuove funzioni
 const getAdminsIds_1 = require("./utils/getAdminsIds");
+const botCommands_1 = require("./botCommands"); // Importa i comandi
 const bot = new Telegraf(process.env.BOT_TOKEN);
 const bodyParser = require("body-parser");
 app.use(bodyParser.json());
 let groupStats = {};
 let groupLimitGeneric = {};
-bot.start(startCommand);
-bot.help(helpCommand);
-bot.command("limits", (ctx) => limitCommand(ctx, groupLimitGeneric));
-bot.command("stats", (ctx) => {
-    var _a, _b;
-    const chatId = (_b = (_a = ctx.message) === null || _a === void 0 ? void 0 : _a.chat) === null || _b === void 0 ? void 0 : _b.id;
-    if (chatId && groupStats[chatId]) {
-        const stats = groupStats[chatId];
-        ctx.reply(`Statistiche del gruppo - ultima ora (non ancora spediti al db):\nMessaggi totali: ${stats.totalMessages}\nDimensione totale: ${stats.totalSizeKB.toFixed(3)} KB`);
-    }
-    else {
-        ctx.reply("Non ci sono statistiche disponibili per questo gruppo.");
-    }
-});
-bot.command("get_admins", (ctx) => __awaiter(void 0, void 0, void 0, function* () {
-    const chatId = ctx.message.chat.id;
-    try {
-        const admins = yield ctx.telegram.getChatAdministrators(chatId);
-        ctx.reply(`Gli amministratori del gruppo sono: ${admins
-            .map((admin) => admin.user.first_name)
-            .join(", ")}`);
-    }
-    catch (error) {
-        console.error("Errore durante il recupero degli amministratori:", error);
-        ctx.reply("Si è verificato un errore durante il recupero degli amministratori.");
-    }
-}));
+bot.start(botCommands_1.startCommand);
+bot.help(botCommands_1.helpCommand);
+bot.command("limits", (ctx) => (0, botCommands_1.limitCommand)(ctx, groupLimitGeneric));
+bot.command("stats", (ctx) => (0, botCommands_1.statsCommand)(ctx, groupStats));
+bot.command("get_admins", botCommands_1.getAdminsCommand);
 bot.on("message", (ctx, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c, _d;
     const chatId = (_b = (_a = ctx.message) === null || _a === void 0 ? void 0 : _a.chat) === null || _b === void 0 ? void 0 : _b.id;
