@@ -141,7 +141,7 @@ export const sendEmptyReport = async (chatId: string, chatInfo: any) => {
     chatInfo.membersCount || 0,
     []
   );
-
+  console.log("payload poco prima di spedire vuoto", payload);
   await sendReportData(payload);
 };
 
@@ -162,7 +162,7 @@ export const sendReport = async (
         chatInfo.membersCount || 0,
         chatInfo.adminIds || []
       );
-      console.log("payload poco prima di spedire");
+      console.log("payload poco prima di spedire", payload);
       await sendReportData(payload);
     }
   }

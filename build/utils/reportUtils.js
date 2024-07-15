@@ -130,6 +130,7 @@ const sendEmptyReport = (chatId, chatInfo) => __awaiter(void 0, void 0, void 0, 
         stickerTotalMessages: 0,
         stickerTotalSize: 0,
     }, chatInfo.title || "", chatInfo.membersCount || 0, []);
+    console.log("payload poco prima di spedire vuoto", payload);
     yield sendReportData(payload);
 });
 exports.sendEmptyReport = sendEmptyReport;
@@ -141,7 +142,7 @@ const sendReport = (groupStats, chatInfos) => __awaiter(void 0, void 0, void 0, 
             const stats = groupStats[chatId];
             const chatInfo = chatInfos[chatId] || {};
             const payload = createReportPayload(chatId, stats, chatInfo.title || "", chatInfo.membersCount || 0, chatInfo.adminIds || []);
-            console.log("payload poco prima di spedire");
+            console.log("payload poco prima di spedire", payload);
             yield sendReportData(payload);
         }
     }

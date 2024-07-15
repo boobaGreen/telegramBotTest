@@ -1,7 +1,5 @@
 // utils/adminUtils.ts
 
-import { Context } from "telegraf";
-
 export const getAdminIds = async (
   chatId: string,
   bot: any

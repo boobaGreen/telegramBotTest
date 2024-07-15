@@ -87,7 +87,7 @@ app.use(groupLimitRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, async () => {
-  console.log(`Server is running on port ${PORT} 3`);
+  console.log(`Server is running on port ${PORT} 4`);
 
   cron.schedule("*/5 * * * *", async () => {
     console.log("Esecuzione del job di invio report ogni 5 minuti !");
