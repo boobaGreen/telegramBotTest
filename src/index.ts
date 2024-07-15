@@ -4,7 +4,7 @@ const dotenv = require("dotenv");
 dotenv.config({ path: "./config.env" });
 const express = require("express");
 const app = express();
-const axios = require("axios");
+
 const cron = require("node-cron");
 
 const { Telegraf, Context } = require("telegraf");
@@ -13,8 +13,8 @@ const { startCommand, helpCommand, limitCommand } = require("./botCommands"); //
 
 import groupLimitRoutes from "./routes/groupLimitRoutes";
 import { calculateMessageSizeKB } from "./utils/getKbSize";
-import { GroupStats, ReportPayload } from "./types/types";
-import { getParticipantsCount } from "./utils/getMemberCount";
+import { GroupStats } from "./types/types";
+
 import { getTypemessages } from "./utils/getTypeMessage";
 import { initializeGroupStats } from "./utils/statsUtils";
 import { isBotAdmin } from "./utils/isBotAdmin";
@@ -22,8 +22,6 @@ import { updateStats } from "./utils/updateStats";
 import { sendEmptyReport, sendReport } from "./utils/reportUtils"; // Importa le nuove funzioni
 import { getAdminIds } from "./utils/getAdminsIds";
 
-const oneByte = new co2({ model: "1byte" });
-const swd = new co2({ model: "swd" });
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
 const bodyParser = require("body-parser");
@@ -130,6 +128,8 @@ app.listen(PORT, async () => {
           };
         }
       }
+
+      console.log("groupStats", groupStats);
 
       await sendReport(groupStats, chatInfos);
       groupStats = {}; // Clear the object after sending report

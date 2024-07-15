@@ -26,6 +26,7 @@ if (process.env.ENVIRONMENT === "production") {
 }
 const finalEndPoint = endPoint + "/api/v1/reports";
 const sendReportData = (payload) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("payload :", payload);
     try {
         const response = yield axios_1.default.post(finalEndPoint, payload, {
             headers: {

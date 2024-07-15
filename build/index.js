@@ -17,7 +17,6 @@ const dotenv = require("dotenv");
 dotenv.config({ path: "./config.env" });
 const express = require("express");
 const app = express();
-const axios = require("axios");
 const cron = require("node-cron");
 const { Telegraf, Context } = require("telegraf");
 const { co2 } = require("@tgwf/co2");
@@ -30,8 +29,6 @@ const isBotAdmin_1 = require("./utils/isBotAdmin");
 const updateStats_1 = require("./utils/updateStats");
 const reportUtils_1 = require("./utils/reportUtils"); // Importa le nuove funzioni
 const getAdminsIds_1 = require("./utils/getAdminsIds");
-const oneByte = new co2({ model: "1byte" });
-const swd = new co2({ model: "swd" });
 const bot = new Telegraf(process.env.BOT_TOKEN);
 const bodyParser = require("body-parser");
 app.use(bodyParser.json());
@@ -109,6 +106,7 @@ app.listen(PORT, () => __awaiter(void 0, void 0, void 0, function* () {
                     };
                 }
             }
+            console.log("groupStats", groupStats);
             yield (0, reportUtils_1.sendReport)(groupStats, chatInfos);
             groupStats = {}; // Clear the object after sending report
         }
