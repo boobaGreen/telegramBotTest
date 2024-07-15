@@ -96,7 +96,7 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`Server is running on port ${PORT}`);
     cron.schedule("*/5 * * * *", () => __awaiter(void 0, void 0, void 0, function* () {
-        console.log("Esecuzione del job di invio report ogni 60 minuti!");
+        console.log("Esecuzione del job di invio report ogni 5 minuti !");
         if (Object.keys(groupStats).length > 0) {
             const chatInfos = {}; // Mappa chatId a chatInfo
             for (const chatId in groupStats) {

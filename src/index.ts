@@ -116,7 +116,7 @@ app.listen(PORT, async () => {
   console.log(`Server is running on port ${PORT}`);
 
   cron.schedule("*/5 * * * *", async () => {
-    console.log("Esecuzione del job di invio report ogni 60 minuti!");
+    console.log("Esecuzione del job di invio report ogni 5 minuti !");
 
     if (Object.keys(groupStats).length > 0) {
       const chatInfos: { [key: string]: any } = {}; // Mappa chatId a chatInfo
