@@ -117,14 +117,6 @@ const updateStats = (
     if (typeOfMessage === "text") {
       groupStats[chatId].textTotalMessages++;
       groupStats[chatId].textTotalSize += messageSizeKB;
-      console.log(
-        "groupStats[chatId].textTotalMessages",
-        groupStats[chatId].textTotalMessages
-      );
-      console.log(
-        "groupStats[chatId].textTotalSize",
-        groupStats[chatId].textTotalSize
-      );
     }
     if (typeOfMessage === "photo") {
       groupStats[chatId].photoTotalMessages++;
@@ -141,8 +133,6 @@ const updateStats = (
     if (typeOfMessage === "voice") {
       groupStats[chatId].voiceTotalMessages++;
       groupStats[chatId].voiceTotalSize += messageSizeKB;
-      console.log("voiceTotalMessages", groupStats[chatId].voiceTotalMessages);
-      console.log("voiceTotalSize", groupStats[chatId].voiceTotalSize);
     }
     if (typeOfMessage === "poll") {
       groupStats[chatId].pollTotalMessages++;
@@ -195,7 +185,7 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, async () => {
   console.log(`Server is running on port ${PORT}`);
 
-  cron.schedule("*/5 * * * *", () => {
+  cron.schedule("0 * * * *", () => {
     console.log("Esecuzione del job di invio report ogni 5 minuti!");
     if (Object.keys(groupStats).length > 0) {
       sendReport();
