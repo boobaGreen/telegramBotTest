@@ -8,6 +8,7 @@ export const getAdminIds = async (
 ): Promise<number[]> => {
   try {
     const admins = await bot.telegram.getChatAdministrators(chatId);
+
     return admins.map((admin: { user: { id: number } }) => admin.user.id);
   } catch (error) {
     console.error(

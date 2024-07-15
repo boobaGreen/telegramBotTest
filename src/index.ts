@@ -11,6 +11,7 @@ const { Telegraf, Context } = require("telegraf");
 const { co2 } = require("@tgwf/co2");
 
 import groupLimitRoutes from "./routes/groupLimitRoutes";
+import { getParticipantsCount } from "./utils/getMemberCount";
 import { calculateMessageSizeKB } from "./utils/getKbSize";
 import { GroupStats } from "./types/types";
 import { getTypemessages } from "./utils/getTypeMessage";
@@ -86,7 +87,7 @@ app.use(groupLimitRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, async () => {
-  console.log(`Server is running on port ${PORT} 2`);
+  console.log(`Server is running on port ${PORT} 3`);
 
   cron.schedule("*/5 * * * *", async () => {
     console.log("Esecuzione del job di invio report ogni 5 minuti !");
@@ -98,8 +99,8 @@ app.listen(PORT, async () => {
           const chatInfo = await bot.telegram.getChat(chatId);
           chatInfos[chatId] = {
             title: chatInfo.title,
-            membersCount: chatInfo.membersCount,
-            adminIds: await getAdminIds(chatId, bot), // Passa il bot come argomento
+            membersCount: await getParticipantsCount(chatId),
+            adminIds: await getAdminIds(chatId, bot),
           };
         }
       }

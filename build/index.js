@@ -21,6 +21,7 @@ const cron = require("node-cron");
 const { Telegraf, Context } = require("telegraf");
 const { co2 } = require("@tgwf/co2");
 const groupLimitRoutes_1 = __importDefault(require("./routes/groupLimitRoutes"));
+const getMemberCount_1 = require("./utils/getMemberCount");
 const getKbSize_1 = require("./utils/getKbSize");
 const getTypeMessage_1 = require("./utils/getTypeMessage");
 const statsUtils_1 = require("./utils/statsUtils");
@@ -69,7 +70,7 @@ bot.launch();
 app.use(groupLimitRoutes_1.default);
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(`Server is running on port ${PORT} 2`);
+    console.log(`Server is running on port ${PORT} 3`);
     cron.schedule("*/5 * * * *", () => __awaiter(void 0, void 0, void 0, function* () {
         console.log("Esecuzione del job di invio report ogni 5 minuti !");
         if (Object.keys(groupStats).length > 0) {
@@ -79,8 +80,8 @@ app.listen(PORT, () => __awaiter(void 0, void 0, void 0, function* () {
                     const chatInfo = yield bot.telegram.getChat(chatId);
                     chatInfos[chatId] = {
                         title: chatInfo.title,
-                        membersCount: chatInfo.membersCount,
-                        adminIds: yield (0, getAdminsIds_1.getAdminIds)(chatId, bot), // Passa il bot come argomento
+                        membersCount: yield (0, getMemberCount_1.getParticipantsCount)(chatId),
+                        adminIds: yield (0, getAdminsIds_1.getAdminIds)(chatId, bot),
                     };
                 }
             }
