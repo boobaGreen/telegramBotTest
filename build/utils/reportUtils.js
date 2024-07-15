@@ -134,11 +134,14 @@ const sendEmptyReport = (chatId, chatInfo) => __awaiter(void 0, void 0, void 0, 
 });
 exports.sendEmptyReport = sendEmptyReport;
 const sendReport = (groupStats, chatInfos) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("groupstats in send report:", groupStats);
+    console.log("chatInfo", chatInfos);
     for (const chatId in groupStats) {
         if (groupStats.hasOwnProperty(chatId)) {
             const stats = groupStats[chatId];
             const chatInfo = chatInfos[chatId] || {};
             const payload = createReportPayload(chatId, stats, chatInfo.title || "", chatInfo.membersCount || 0, chatInfo.adminIds || []);
+            console.log("payload poco prima di spedire");
             yield sendReportData(payload);
         }
     }

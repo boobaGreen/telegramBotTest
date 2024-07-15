@@ -38,10 +38,11 @@ let groupLimitGeneric: Record<string, number> = {};
 
 bot.start(startCommand);
 bot.help(helpCommand);
-bot.command("limits", (ctx: any) => limitCommand(ctx, groupLimitGeneric));
-bot.command("stats", (ctx: any) => statsCommand(ctx, groupStats));
 bot.command("get_admins", getAdminsCommand);
-
+bot.command("stats", (ctx: typeof Context) => statsCommand(ctx, groupStats));
+bot.command("limits", (ctx: typeof Context) =>
+  limitCommand(ctx, groupLimitGeneric)
+);
 bot.on("message", async (ctx: typeof Context, next: () => void) => {
   const chatId = ctx.message?.chat?.id;
   const chatType = ctx.message?.chat?.type;
@@ -104,7 +105,7 @@ app.listen(PORT, async () => {
       }
 
       console.log("groupStats", groupStats);
-
+      console.log("chatInfos", chatInfos);
       await sendReport(groupStats, chatInfos);
       groupStats = {}; // Clear the object after sending report
     } else {

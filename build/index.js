@@ -36,9 +36,9 @@ let groupStats = {};
 let groupLimitGeneric = {};
 bot.start(botCommands_1.startCommand);
 bot.help(botCommands_1.helpCommand);
-bot.command("limits", (ctx) => (0, botCommands_1.limitCommand)(ctx, groupLimitGeneric));
-bot.command("stats", (ctx) => (0, botCommands_1.statsCommand)(ctx, groupStats));
 bot.command("get_admins", botCommands_1.getAdminsCommand);
+bot.command("stats", (ctx) => (0, botCommands_1.statsCommand)(ctx, groupStats));
+bot.command("limits", (ctx) => (0, botCommands_1.limitCommand)(ctx, groupLimitGeneric));
 bot.on("message", (ctx, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c, _d;
     const chatId = (_b = (_a = ctx.message) === null || _a === void 0 ? void 0 : _a.chat) === null || _b === void 0 ? void 0 : _b.id;
@@ -85,6 +85,7 @@ app.listen(PORT, () => __awaiter(void 0, void 0, void 0, function* () {
                 }
             }
             console.log("groupStats", groupStats);
+            console.log("chatInfos", chatInfos);
             yield (0, reportUtils_1.sendReport)(groupStats, chatInfos);
             groupStats = {}; // Clear the object after sending report
         }
