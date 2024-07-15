@@ -29,17 +29,6 @@ let groupLimitGeneric: Record<string, number> = {};
 bot.start(startCommand); // Usa il comando start importato
 bot.help(helpCommand); // Usa il comando help importato
 
-// bot.command("limits", (ctx: typeof Context) => {
-//   const chatId = ctx.message?.chat?.id;
-//   const genericLimit = groupLimitGeneric[chatId];
-
-//   if (!genericLimit) {
-//     ctx.reply("Non ci sono limiti impostati per questo gruppo.");
-//   } else {
-//     ctx.reply(`Limite generico: ${genericLimit} KB`);
-//   }
-// });
-
 bot.command("limits", (ctx: any) => limitCommand(ctx, groupLimitGeneric)); // Usa il comando limits importato
 
 bot.command("stats", (ctx: typeof Context) => {
@@ -141,7 +130,7 @@ const updateStats = (
       groupStats[chatId].documentTotalMessages++;
       groupStats[chatId].documentTotalSize += messageSizeKB;
     }
-    if (typeOfMessage === "audio") {
+    if (typeOfMessage === "voice") {
       groupStats[chatId].voiceTotalMessages++;
       groupStats[chatId].voiceTotalSize += messageSizeKB;
     }
