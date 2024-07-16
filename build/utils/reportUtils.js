@@ -13,18 +13,27 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.sendReport = exports.sendEmptyReport = void 0;
-// utils/reportUtils.ts
 const dotenv = require("dotenv");
 dotenv.config({ path: "./config.env" });
 const axios_1 = __importDefault(require("axios"));
 const { co2 } = require("@tgwf/co2");
+// Inizializza i modelli CO2 per il calcolo delle emissioni
 const oneByte = new co2({ model: "1byte" });
 const swd = new co2({ model: "swd" });
+// Configura l'endpoint per l'invio dei report
 let endPoint = "http://localhost:3005";
 if (process.env.ENVIRONMENT === "production") {
     endPoint = process.env.REPORT_ENDPOINT || "";
 }
 const finalEndPoint = endPoint + "/api/v1/reports";
+/**
+ * Invia i dati del report all'endpoint configurato.
+ * Questa funzione gestisce l'invio dei dati del report al server tramite una richiesta HTTP POST.
+ *
+ * @param payload - I dati del report da inviare, strutturati come `ReportPayload`.
+ *
+ * @returns {Promise<void>} - Una promessa che si risolve quando l'invio è completato, oppure viene rigettata in caso di errore.
+ */
 const sendReportData = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     console.log("payload :", payload);
     try {
@@ -40,7 +49,9 @@ const sendReportData = (payload) => __awaiter(void 0, void 0, void 0, function* 
         console.error(`Errore durante l'invio del report per il gruppo ${payload.groupId}:`, error);
     }
 });
+// Crea il payload del report con i dati aggregati e le emissioni calcolate
 const createReportPayload = (chatId, stats, groupName = "", participantsCount = 0, adminIds = []) => {
+    // Calcola la dimensione totale e le emissioni per ogni tipo di messaggio
     const totalSizeBytes = stats.totalSizeKB * 1024;
     const textTotalSizeBytes = stats.textTotalSize * 1024;
     const photoTotalSizeBytes = stats.photoTotalSize * 1024;
@@ -49,6 +60,7 @@ const createReportPayload = (chatId, stats, groupName = "", participantsCount = 
     const voiceTotalSizeBytes = stats.voiceTotalSize * 1024;
     const stickerTotalSizeBytes = stats.stickerTotalSize * 1024;
     const pollTotalSizeBytes = stats.pollTotalSize * 1024;
+    // Calcola le emissioni di CO2 utilizzando due metodi
     const emissionsOneByteMethod = oneByte.perByte(totalSizeBytes).toFixed(7);
     const emissionsSWDMethod = swd.perByte(totalSizeBytes).toFixed(7);
     const textEmissionsOneByteMethod = oneByte
@@ -83,6 +95,7 @@ const createReportPayload = (chatId, stats, groupName = "", participantsCount = 
         .perByte(pollTotalSizeBytes)
         .toFixed(7);
     const pollEmissionsSWDMethod = swd.perByte(pollTotalSizeBytes).toFixed(7);
+    // Gestisce i valori mancanti e restituisce il payload del report
     let totalMessages = stats.totalMessages || 0;
     let totalSizeKB = stats.totalSizeKB || 0;
     let emissionsOneByte = isNaN(parseFloat(emissionsOneByteMethod))
@@ -182,10 +195,11 @@ const createReportPayload = (chatId, stats, groupName = "", participantsCount = 
         stickerEmissionsOneByteMethod: stickerEmissionsOneByte,
         stickerEmissionsSWDMethod: stickerEmissionsSWD,
         groupName: groupName,
-        participantsCount, // Aggiungi il numero di partecipanti al payload
-        adminIds, // Aggiungi i nomi degli amministratori al payload
+        participantsCount, // Aggiunge il numero di partecipanti al payload
+        adminIds, // Aggiunge gli ID degli amministratori al payload
     };
 };
+// Invia un report vuoto per un gruppo specificato
 const sendEmptyReport = (chatId, chatInfo) => __awaiter(void 0, void 0, void 0, function* () {
     const payload = createReportPayload(chatId, {
         totalMessages: 0,
@@ -209,13 +223,14 @@ const sendEmptyReport = (chatId, chatInfo) => __awaiter(void 0, void 0, void 0, 
     yield sendReportData(payload);
 });
 exports.sendEmptyReport = sendEmptyReport;
+// Invia report per tutti i gruppi e azzera i contatori dopo l'invio
 const sendReport = (groupStats, chatInfos) => __awaiter(void 0, void 0, void 0, function* () {
     for (const chatId in groupStats) {
         const stats = groupStats[chatId];
         const chatInfo = chatInfos[chatId] || {};
         const payload = createReportPayload(chatId, stats, chatInfo.title || "", chatInfo.membersCount || 0, chatInfo.adminIds || []);
         yield sendReportData(payload);
-        // Azzeriamo solo i contatori dopo l'invio del report
+        // Azzeramento dei contatori per il gruppo dopo l'invio del report
         groupStats[chatId] = {
             totalMessages: 0,
             totalSizeKB: 0,
