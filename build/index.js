@@ -19,7 +19,6 @@ const express = require("express");
 const app = express();
 const cron = require("node-cron");
 const { Telegraf, Context } = require("telegraf");
-const { co2 } = require("@tgwf/co2");
 const groupLimitRoutes_1 = __importDefault(require("./routes/groupLimitRoutes"));
 const getMemberCount_1 = require("./utils/getMemberCount");
 const getKbSize_1 = require("./utils/getKbSize");
@@ -85,8 +84,6 @@ app.listen(PORT, () => __awaiter(void 0, void 0, void 0, function* () {
                     };
                 }
             }
-            console.log("groupStats", groupStats);
-            console.log("chatInfos", chatInfos);
             yield (0, reportUtils_1.sendReport)(groupStats, chatInfos);
             groupStats = {}; // Clear the object after sending report
         }

@@ -8,7 +8,6 @@ const app = express();
 const cron = require("node-cron");
 
 const { Telegraf, Context } = require("telegraf");
-const { co2 } = require("@tgwf/co2");
 
 import groupLimitRoutes from "./routes/groupLimitRoutes";
 import { getParticipantsCount } from "./utils/getMemberCount";
@@ -105,8 +104,6 @@ app.listen(PORT, async () => {
         }
       }
 
-      console.log("groupStats", groupStats);
-      console.log("chatInfos", chatInfos);
       await sendReport(groupStats, chatInfos);
       groupStats = {}; // Clear the object after sending report
     } else {
