@@ -210,16 +210,10 @@ const sendEmptyReport = (chatId, chatInfo) => __awaiter(void 0, void 0, void 0, 
 });
 exports.sendEmptyReport = sendEmptyReport;
 const sendReport = (groupStats, chatInfos) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("groupstats in send report:", groupStats);
-    console.log("chatInfo in send report", chatInfos);
     for (const chatId in groupStats) {
-        console.log("chatId in send report:", chatId);
-        console.log("groupStats in send report in: 2", groupStats);
-        console.log("groupStats[chatId] in send report in 2:", groupStats[chatId]);
         const stats = groupStats[chatId];
         const chatInfo = chatInfos[chatId] || {};
         const payload = createReportPayload(chatId, stats, chatInfo.title || "", chatInfo.membersCount || 0, chatInfo.adminIds || []);
-        console.log("payload poco prima di spedire *******", payload);
         yield sendReportData(payload);
         // Azzeriamo solo i contatori dopo l'invio del report
         groupStats[chatId] = {

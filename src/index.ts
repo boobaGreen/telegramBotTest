@@ -85,17 +85,14 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, async () => {
   console.log(`Server is running on port ${PORT} 5`);
 
-  cron.schedule("*/5 * * * *", async () => {
-    console.log("Esecuzione del job di invio report ogni 5 minuti !");
-
+  cron.schedule("0 * * * *", async () => {
     if (Object.keys(groupStats).length > 0) {
       const chatInfos: { [key: string]: any } = {}; // Mappa chatId a chatInfo
-      console.log("chatInfos in LAST-----------------:", chatInfos);
+
       for (const chatId in groupStats) {
-        console.log("chatId in LAST---------------- :", chatId);
         if (groupStats.hasOwnProperty(chatId)) {
           const chatInfo = await bot.telegram.getChat(chatId);
-          console.log("chatInfo in LAST---------------- :", chatInfo);
+
           chatInfos[chatId] = {
             title: chatInfo.title,
             membersCount: await getParticipantsCount(chatId),
@@ -103,11 +100,7 @@ app.listen(PORT, async () => {
           };
         }
       }
-      console.log(
-        "chatInfos in LAST LAST LAST prima di chiamata sendreport()-----------------:",
-        chatInfos
-      );
-      console.log("groupStats in LAST LAST LAST-----------------:", groupStats);
+
       await sendReport(groupStats, chatInfos);
     } else {
       console.log("Nessun dato da inviare.");

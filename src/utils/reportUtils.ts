@@ -3,7 +3,6 @@ const dotenv = require("dotenv");
 dotenv.config({ path: "./config.env" });
 import axios from "axios";
 import { GroupStats, ReportPayload } from "../types/types";
-import { title } from "process";
 
 const { co2 } = require("@tgwf/co2");
 
@@ -233,13 +232,7 @@ export const sendReport = async (
   groupStats: Record<string, GroupStats>,
   chatInfos: Record<string, any>
 ) => {
-  console.log("groupstats in send report:", groupStats);
-  console.log("chatInfo in send report", chatInfos);
   for (const chatId in groupStats) {
-    console.log("chatId in send report:", chatId);
-    console.log("groupStats in send report in: 2", groupStats);
-    console.log("groupStats[chatId] in send report in 2:", groupStats[chatId]);
-
     const stats = groupStats[chatId];
     const chatInfo = chatInfos[chatId] || {};
     const payload = createReportPayload(
@@ -249,7 +242,7 @@ export const sendReport = async (
       chatInfo.membersCount || 0,
       chatInfo.adminIds || []
     );
-    console.log("payload poco prima di spedire *******", payload);
+
     await sendReportData(payload);
     // Azzeriamo solo i contatori dopo l'invio del report
     groupStats[chatId] = {
