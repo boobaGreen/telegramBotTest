@@ -70,7 +70,7 @@ bot.launch();
 app.use(groupLimitRoutes_1.default);
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(`Server is running on port ${PORT} 4`);
+    console.log(`Server is running on port ${PORT} 5`);
     cron.schedule("*/5 * * * *", () => __awaiter(void 0, void 0, void 0, function* () {
         console.log("Esecuzione del job di invio report ogni 5 minuti !");
         if (Object.keys(groupStats).length > 0) {

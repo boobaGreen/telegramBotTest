@@ -142,7 +142,7 @@ const sendReport = (groupStats, chatInfos) => __awaiter(void 0, void 0, void 0, 
             const stats = groupStats[chatId];
             const chatInfo = chatInfos[chatId] || {};
             const payload = createReportPayload(chatId, stats, chatInfo.title || "", chatInfo.membersCount || 0, chatInfo.adminIds || []);
-            console.log("payload poco prima di spedire", payload);
+            console.log("payload poco prima di spedire *******", payload);
             yield sendReportData(payload);
         }
     }

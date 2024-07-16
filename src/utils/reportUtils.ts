@@ -162,7 +162,7 @@ export const sendReport = async (
         chatInfo.membersCount || 0,
         chatInfo.adminIds || []
       );
-      console.log("payload poco prima di spedire", payload);
+      console.log("payload poco prima di spedire *******", payload);
       await sendReportData(payload);
     }
   }
