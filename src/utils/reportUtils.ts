@@ -42,6 +42,8 @@ const createReportPayload = (
   participantsCount: number = 0,
   adminIds: number[] = []
 ): ReportPayload => {
+  console.log("dentro *****************************++ createReportPayload");
+  console.log("stats in createReportPayload prima", stats);
   const totalSizeBytes = stats.totalSizeKB * 1024;
   const textTotalSizeBytes = stats.textTotalSize * 1024;
   const photoTotalSizeBytes = stats.photoTotalSize * 1024;
@@ -49,7 +51,7 @@ const createReportPayload = (
   const documentTotalSizeBytes = stats.documentTotalSize * 1024;
   const voiceTotalSizeBytes = stats.voiceTotalSize * 1024;
   const stickerTotalSizeBytes = stats.stickerTotalSize * 1024;
-
+  console.log("stats in createReportPayload seconda", stats);
   const emissionsOneByte = oneByte
     .update(totalSizeBytes)
     .text(textTotalSizeBytes)
@@ -58,7 +60,7 @@ const createReportPayload = (
     .voice(voiceTotalSizeBytes)
     .document(documentTotalSizeBytes)
     .sticker(stickerTotalSizeBytes);
-
+  console.log("stats in createReportPayload terza", stats);
   const emissionsSWD = swd
     .update(totalSizeBytes)
     .text(textTotalSizeBytes)
@@ -169,3 +171,22 @@ export const sendReport = async (
     await sendReportData(payload);
   }
 };
+// // Azzeriamo solo i contatori dopo l'invio del report
+// groupStats[chatId] = {
+//   totalMessages: 0,
+//   totalSizeKB: 0,
+//   textTotalMessages: 0,
+//   textTotalSize: 0,
+//   photoTotalMessages: 0,
+//   photoTotalSize: 0,
+//   videoTotalMessages: 0,
+//   videoTotalSize: 0,
+//   voiceTotalMessages: 0,
+//   voiceTotalSize: 0,
+//   documentTotalMessages: 0,
+//   documentTotalSize: 0,
+//   pollTotalMessages: 0,
+//   pollTotalSize: 0,
+//   stickerTotalMessages: 0,
+//   stickerTotalSize: 0,
+// };

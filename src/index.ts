@@ -4,9 +4,7 @@ const dotenv = require("dotenv");
 dotenv.config({ path: "./config.env" });
 const express = require("express");
 const app = express();
-
 const cron = require("node-cron");
-
 const { Telegraf, Context } = require("telegraf");
 
 import groupLimitRoutes from "./routes/groupLimitRoutes";
@@ -28,7 +26,6 @@ import {
 } from "./botCommands"; // Importa i comandi
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
-
 const bodyParser = require("body-parser");
 
 app.use(bodyParser.json());
