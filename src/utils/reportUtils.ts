@@ -150,23 +150,22 @@ export const sendReport = async (
   chatInfos: Record<string, any>
 ) => {
   console.log("groupstats in send report:", groupStats);
-  console.log("chatInfo", chatInfos);
+  console.log("chatInfo in send report", chatInfos);
   for (const chatId in groupStats) {
     console.log("chatId in send report:", chatId);
-    console.log("groupStats in send report:", groupStats);
-    console.log("groupStats[chatId] in send report:", groupStats[chatId]);
-    if (groupStats.hasOwnProperty(chatId)) {
-      const stats = groupStats[chatId];
-      const chatInfo = chatInfos[chatId] || {};
-      const payload = createReportPayload(
-        chatId,
-        stats,
-        chatInfo.title || "",
-        chatInfo.membersCount || 0,
-        chatInfo.adminIds || []
-      );
-      console.log("payload poco prima di spedire *******", payload);
-      await sendReportData(payload);
-    }
+    console.log("groupStats in send report in: 2", groupStats);
+    console.log("groupStats[chatId] in send report in 2:", groupStats[chatId]);
+
+    const stats = groupStats[chatId];
+    const chatInfo = chatInfos[chatId] || {};
+    const payload = createReportPayload(
+      chatId,
+      stats,
+      chatInfo.title || "",
+      chatInfo.membersCount || 0,
+      chatInfo.adminIds || []
+    );
+    console.log("payload poco prima di spedire *******", payload);
+    await sendReportData(payload);
   }
 };
