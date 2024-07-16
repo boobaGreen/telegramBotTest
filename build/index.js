@@ -44,7 +44,7 @@ bot.help(botCommands_1.helpCommand);
 bot.command("get_admins", botCommands_1.getAdminsCommand);
 bot.command("stats", (ctx) => (0, botCommands_1.statsCommand)(ctx, groupStats));
 bot.command("limits", (ctx) => (0, botCommands_1.limitCommand)(ctx, groupLimitGeneric));
-// Gestisce i messaggi del bot
+// Intercetta i messaggi del bot
 bot.on("message", (ctx, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c, _d;
     const chatId = (_b = (_a = ctx.message) === null || _a === void 0 ? void 0 : _a.chat) === null || _b === void 0 ? void 0 : _b.id;

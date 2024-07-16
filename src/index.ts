@@ -46,7 +46,7 @@ bot.command("limits", (ctx: typeof Context) =>
   limitCommand(ctx, groupLimitGeneric)
 );
 
-// Gestisce i messaggi del bot
+// Intercetta i messaggi del bot
 bot.on("message", async (ctx: typeof Context, next: () => void) => {
   const chatId = ctx.message?.chat?.id;
   const chatType = ctx.message?.chat?.type;
