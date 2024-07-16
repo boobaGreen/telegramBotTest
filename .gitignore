@@ -3,10 +3,10 @@ logs
 *.log
 
 node_modules
+build
 dist
+.vscode
 
 
 config.env
-
-
 .gitignore
