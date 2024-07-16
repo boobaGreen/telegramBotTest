@@ -85,7 +85,6 @@ app.listen(PORT, () => __awaiter(void 0, void 0, void 0, function* () {
                 }
             }
             yield (0, reportUtils_1.sendReport)(groupStats, chatInfos);
-            groupStats = {}; // Clear the object after sending report
         }
         else {
             console.log("Nessun dato da inviare.");

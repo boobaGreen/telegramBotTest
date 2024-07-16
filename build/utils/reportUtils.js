@@ -138,6 +138,9 @@ const sendReport = (groupStats, chatInfos) => __awaiter(void 0, void 0, void 0, 
     console.log("groupstats in send report:", groupStats);
     console.log("chatInfo", chatInfos);
     for (const chatId in groupStats) {
+        console.log("chatId in send report:", chatId);
+        console.log("groupStats in send report:", groupStats);
+        console.log("groupStats[chatId] in send report:", groupStats[chatId]);
         if (groupStats.hasOwnProperty(chatId)) {
             const stats = groupStats[chatId];
             const chatInfo = chatInfos[chatId] || {};

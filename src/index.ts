@@ -105,7 +105,6 @@ app.listen(PORT, async () => {
       }
 
       await sendReport(groupStats, chatInfos);
-      groupStats = {}; // Clear the object after sending report
     } else {
       console.log("Nessun dato da inviare.");
       const allChats = await bot.telegram.getMyCommands();
