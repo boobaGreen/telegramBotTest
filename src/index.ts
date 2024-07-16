@@ -6,7 +6,7 @@ const express = require("express");
 const app = express();
 const cron = require("node-cron");
 const { Telegraf, Context } = require("telegraf");
-
+import logger from "./logger";
 // Importa le route e le funzioni utility
 import groupLimitRoutes from "./routes/groupLimitRoutes";
 import { getParticipantsCount } from "./utils/getMemberCount";
@@ -16,7 +16,7 @@ import { getTypemessages } from "./utils/getTypeMessage";
 import { initializeGroupStats } from "./utils/statsUtils";
 import { isBotAdmin } from "./utils/isBotAdmin";
 import { updateStats } from "./utils/updateStats";
-import { sendEmptyReport, sendReport } from "./utils/reportUtils";
+import { sendReport } from "./utils/reportUtils";
 import { getAdminIds } from "./utils/getAdminsIds";
 import {
   startCommand,
@@ -82,7 +82,7 @@ bot.on("message", async (ctx: typeof Context, next: () => void) => {
       );
     }
   } else {
-    console.log(`Il bot con ID ${bot.botInfo.id} non è più un amministratore.`);
+    logger.info(`Il bot con ID ${bot.botInfo.id} non è più un amministratore.`);
   }
 
   next(); // Passa il controllo al middleware successivo
@@ -97,10 +97,10 @@ app.use(groupLimitRoutes);
 // Configura il server Express per ascoltare le richieste sulla porta specificata
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, async () => {
-  console.log(`Server is running on port ${PORT}`);
+  logger.info(`Server is running on port ${PORT}`);
 
-  // Pianifica il job cron per inviare report ogni ora
-  cron.schedule("0 * * * *", async () => {
+  // Pianifica il job cron per inviare report ogni 5 min
+  cron.schedule("*/5 * * * *", async () => {
     if (Object.keys(groupStats).length > 0) {
       const chatInfos: { [key: string]: any } = {}; // Mappa chatId a chatInfo
 
@@ -118,16 +118,9 @@ app.listen(PORT, async () => {
 
       // Invia il report con le statistiche aggregate
       await sendReport(groupStats, chatInfos);
-    } else {
-      console.log("Nessun dato da inviare.");
-
-      // Invia un report vuoto per ogni chat
-      const allChats = await bot.telegram.getMyCommands();
-      for (const chat of allChats) {
-        const chatId = chat.chat.id;
-        const chatInfo = await bot.telegram.getChat(chatId);
-        await sendEmptyReport(chatId, chatInfo);
-      }
-    }
+    } else
+      logger.info(
+        "Nessun gruppo registrato con messaggi spediti in attesa per il prossimo report time...."
+      );
   });
 });

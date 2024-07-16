@@ -1,10 +1,11 @@
 import { Request, Response } from "express";
+import logger from "../logger";
 
 // Oggetto per tenere traccia dei limiti generici dei gruppi
 let groupLimitGeneric: Record<string, number> = {};
 
 export const getTest = (_req: Request, res: Response) => {
-  console.log("test endpoint hit! wsb81");
+  logger.warn("healthcheck endpoint called successfully.");
   res.status(200).json({
     success: "Server is running and bot is active.",
   });

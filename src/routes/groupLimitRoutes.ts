@@ -7,7 +7,7 @@ import {
 
 const router = Router();
 
-router.get("/test", getTest);
+router.get("/healthcheck", getTest);
 router.post("/groupLimitGeneric", postGroupLimitGeneric);
 router.delete("/groupLimitGeneric/:chatId", deleteGroupLimitGeneric);
 
