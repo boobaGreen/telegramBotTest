@@ -74,9 +74,12 @@ app.listen(PORT, () => __awaiter(void 0, void 0, void 0, function* () {
         console.log("Esecuzione del job di invio report ogni 5 minuti !");
         if (Object.keys(groupStats).length > 0) {
             const chatInfos = {}; // Mappa chatId a chatInfo
+            console.log("chatInfos in LAST-----------------:", chatInfos);
             for (const chatId in groupStats) {
+                console.log("chatId in LAST---------------- :", chatId);
                 if (groupStats.hasOwnProperty(chatId)) {
                     const chatInfo = yield bot.telegram.getChat(chatId);
+                    console.log("chatInfo in LAST---------------- :", chatInfo);
                     chatInfos[chatId] = {
                         title: chatInfo.title,
                         membersCount: yield (0, getMemberCount_1.getParticipantsCount)(chatId),
@@ -84,6 +87,8 @@ app.listen(PORT, () => __awaiter(void 0, void 0, void 0, function* () {
                     };
                 }
             }
+            console.log("chatInfos in LAST LAST LAST prima di chiamata sendreport()-----------------:", chatInfos);
+            console.log("groupStats in LAST LAST LAST-----------------:", groupStats);
             yield (0, reportUtils_1.sendReport)(groupStats, chatInfos);
         }
         else {
