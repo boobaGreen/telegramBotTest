@@ -99,8 +99,8 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, async () => {
   logger.info(`Server is running on port ${PORT}`);
 
-  // Pianifica il job cron per inviare report ogni 5 min
-  cron.schedule("*/5 * * * *", async () => {
+  // Pianifica il job cron per inviare report ogni 60 min
+  cron.schedule("0 * * * *", async () => {
     if (Object.keys(groupStats).length > 0) {
       const chatInfos: { [key: string]: any } = {}; // Mappa chatId a chatInfo
 
